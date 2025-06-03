@@ -1,9 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { rtdb } from "./lib/firebase";
-  import { ref as dbRef, onValue, get } from "firebase/database";
+  import { ref as dbRef, onValue, get, set } from "firebase/database";
   import { searchYoutubeVideo } from "./lib/youtube-api";
-
+  import { auth } from "./lib/firebase";
+  import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 
   let currentBpm: number | null = null;
   let lastUpdated: number | null = null;
@@ -46,21 +47,49 @@
   let recommendations: Recommendation[] = [];
   let isSearching = false;
   let errorMessage: string | null = null;
+  let showLaunchScreen = true;
+  let showWelcomePage = false;
+  let showSignInPage = false;
+  let showPreferencesPage = false;
+  let user: any = null;
 
-  // YouTube IFrame API 로드
+  // User preferences
+  let userPreferences = {
+    energy: 0.5, // 0-1 scale
+    popularity: 'hidden-gems', // 'chart-toppers' or 'hidden-gems'
+    danceability: 3, // 1-5 scale
+    speechiness: 3 // 1-5 scale
+  };
+
+  // Auto-hide launch screen after 3 seconds
   onMount(() => {
-    if (!document.getElementById("youtube-iframe-api")) {
-      const tag = document.createElement("script");
-      tag.id = "youtube-iframe-api";
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
-    }
+    const timer = setTimeout(() => {
+      showLaunchScreen = false;
+      showWelcomePage = true;
+    }, 3000);
 
-    (window as any).onYouTubeIframeAPIReady = () => {
-      playerReady = true;
-    };
+    // Firebase Auth state listener
+    onAuthStateChanged(auth, async (authUser) => {
+      user = authUser;
+      if (user) {
+        // Check if user has preferences saved
+        const hasPreferences = await checkUserPreferences(user.uid);
+        if (hasPreferences) {
+          // Existing user - go to main app
+          showSignInPage = false;
+          showWelcomePage = false;
+          showPreferencesPage = false;
+          // TODO: Add main app page
+        } else {
+          // First-time user - show preferences page
+          showSignInPage = false;
+          showWelcomePage = false;
+          showPreferencesPage = true;
+        }
+      }
+    });
 
+    // Firebase real-time data setup
     (async () => {
       const bpmRef = dbRef(rtdb, "heart_rate/current_bpm");
       onValue(bpmRef, (snapshot) => {
@@ -80,6 +109,104 @@
         console.error("DB에서 전체 오디오 피처를 가져오는 중 오류:", e);
       }
     })();
+
+    return () => clearTimeout(timer);
+  });
+
+  async function checkUserPreferences(userId: string): Promise<boolean> {
+    try {
+      const snapshot = await get(dbRef(rtdb, `users/${userId}/preferences`));
+      return snapshot.exists();
+    } catch (error) {
+      console.error("Error checking user preferences:", error);
+      return false;
+    }
+  }
+
+  async function saveUserPreferences() {
+    if (!user) return;
+    
+    try {
+      await set(dbRef(rtdb, `users/${user.uid}/preferences`), userPreferences);
+      await set(dbRef(rtdb, `users/${user.uid}/createdAt`), Date.now());
+      
+      // Navigate to main app
+      showPreferencesPage = false;
+      // TODO: Add main app page
+      console.log("Preferences saved, navigate to main app");
+    } catch (error) {
+      console.error("Error saving preferences:", error);
+    }
+  }
+
+  function continueToApp() {
+    showWelcomePage = false;
+    showSignInPage = true;
+  }
+
+  function skipWelcome() {
+    showWelcomePage = false;
+    showSignInPage = true;
+  }
+
+  function skipSignIn() {
+    showSignInPage = false;
+    // TODO: Add main app page
+    console.log("Skip sign in");
+  }
+
+  function goBackFromSignIn() {
+    showSignInPage = false;
+    showWelcomePage = true;
+  }
+
+  function goBackFromPreferences() {
+    showPreferencesPage = false;
+    showSignInPage = true;
+  }
+
+  async function signInWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log("User signed in:", result.user);
+      // User will be redirected by the auth state listener
+    } catch (error) {
+      console.error("Error signing in:", error);
+    }
+  }
+
+  // Preference handlers
+  function updateEnergyLevel(event: Event) {
+    const target = event.target as HTMLInputElement;
+    userPreferences.energy = parseFloat(target.value);
+  }
+
+  function selectPopularity(type: 'chart-toppers' | 'hidden-gems') {
+    userPreferences.popularity = type;
+  }
+
+  function selectDanceability(level: number) {
+    userPreferences.danceability = level;
+  }
+
+  function selectSpeechiness(level: number) {
+    userPreferences.speechiness = level;
+  }
+
+  // YouTube IFrame API 로드
+  onMount(() => {
+    if (!document.getElementById("youtube-iframe-api")) {
+      const tag = document.createElement("script");
+      tag.id = "youtube-iframe-api";
+      tag.src = "https://www.youtube.com/iframe_api";
+      const firstScriptTag = document.getElementsByTagName("script")[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+
+    (window as any).onYouTubeIframeAPIReady = () => {
+      playerReady = true;
+    };
   });
 
   // 유사도 계산 함수
@@ -236,142 +363,146 @@
   }
 </script>
 
-<style>
-  .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 1rem;
-    font-family: Arial, sans-serif;
-  }
-  h1 {
-    text-align: center;
-  }
-  .bpm-card,
-  .search-card,
-  .rec-card {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 1rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  .bpm-value {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #e53935;
-  }
-  .search-container {
-    display: flex;
-    gap: 0.5rem;
-  }
-  input[type="text"] {
-    flex: 1;
-    padding: 0.5rem;
-    font-size: 1rem;
-  }
-  button {
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #1db954;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  button:disabled {
-    background-color: #aaa;
-    cursor: not-allowed;
-  }
-  .rec-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .rec-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.5rem;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-  }
-  .rec-item:hover {
-    background-color: #f9f9f9;
-  }
-  .rec-item.selected {
-    background-color: #e0f7fa;
-  }
-  .youtube-player {
-    margin-top: 1rem;
-    text-align: center;
-  }
-  #yt-player {
-    width: 100%;
-    max-width: 560px;
-    height: 315px;
-    margin: 0 auto;
-  }
-</style>
+<div class="mobile-container">
+  {#if showLaunchScreen}
+    <div class="launch-screen">
+      <div class="ellipse-1"></div>
+      
+      <div class="heart-logo">
+        <svg class="heart-ecg-icon" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Heart outline -->
+          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
+                stroke="rgba(255, 255, 255, 0.7)" 
+                stroke-width="6" 
+                fill="none"/>
+          
+          <!-- ECG line through heart -->
+          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
+                stroke="rgba(255, 255, 255, 0.8)" 
+                stroke-width="6" 
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </div>
 
-<div class="container">
-  <h1>🎵 Heart-Beat 기반 뮤직 플레이어 (추천 Playlist)</h1>
-
-  <div class="bpm-card">
-    <h2>실시간 심박수</h2>
-    {#if currentBpm !== null}
-      <div class="bpm-value">{currentBpm} BPM</div>
-      {#if lastUpdated}
-        <small>마지막 업데이트: {new Date(lastUpdated * 1000).toLocaleTimeString()}</small>
-      {/if}
-    {:else}
-      <div class="bpm-value">--</div>
-      <small>심박수 데이터를 기다리는 중...</small>
-    {/if}
-  </div>
-
-  <div class="search-card">
-    <h2>곡 검색</h2>
-    <div class="search-container">
-      <input
-        type="text"
-        bind:value={queryText}
-        placeholder="검색어를 입력하세요 (예: Big Bank)"
-        on:keydown={(e) => {
-          if (e.key === "Enter") handleSearch();
-        }}
-      />
-      <button on:click={handleSearch} disabled={isSearching}>
-        {#if isSearching}검색 중...{:else}검색{/if}
-      </button>
+      <div class="app-title">HEARTSTREAM</div>
     </div>
-    {#if errorMessage}
-      <p style="color: red; margin-top: 0.5rem;">{errorMessage}</p>
-    {/if}
-  </div>
-
-  {#if recommendations.length > 0}
-    <div class="rec-card">
-      <h2>입력하신 곡과 유사한 추천 곡 목록</h2>
-      <ul class="rec-list">
-        {#each recommendations as rec (rec.index)}
-          <li
-            class="rec-item {rec.index === currentIndex ? 'selected' : ''}"
-            on:click={() => playRecommendation(rec.index)}
-          >
-            <span>{rec.track_name}</span>
-            {#if rec.videoId}
-              <small>▶</small>
-            {:else}
-              <small>(영상 없음)</small>
-            {/if}
-          </li>
+  {:else if showWelcomePage}
+    <div class="welcome">
+      <div class="ellipse-1"></div>
+      
+      <div class="heartstream">
+        <span class="heartstream_span_01">H</span><span class="heartstream_span_02">EART</span><span class="heartstream_span_03">S</span><span class="heartstream_span_04">TREAM</span>
+      </div>
+      <div class="welcome_01"><span class="welcome_01_span">Welcome</span></div>
+      <div class="description-text">
+        <span>HeartStream is a music app that syncs with your heartbeat to instantly play the perfect song</span>
+      </div>
+      <div class="continue-button" on:click={continueToApp}>
+        <span class="continue_span">Continue</span>
+      </div>
+      <div class="black-bg"></div>
+      <div class="heart-logo-welcome">
+        <svg class="heart-ecg-icon-small" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Heart outline -->
+          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
+                stroke="rgba(255, 255, 255, 0.9)" 
+                stroke-width="6" 
+                fill="none"/>
+          
+          <!-- ECG line through heart -->
+          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
+                stroke="rgba(255, 255, 255, 0.9)" 
+                stroke-width="6" 
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </div>
+  {:else if showSignInPage}
+    <div class="sign-in">
+      <div class="ellipse-1_01"></div>
+      <div class="heartstream"><span class="heartstream_span_01">H</span><span class="heartstream_span_02">EART</span><span class="heartstream_span_03">S</span><span class="heartstream_span_04">TREAM</span></div>
+      <div class="setup-your-profile"><span class="setupyourprofile_span">Setup your profile</span></div>
+      <div class="sign-in-with-your-google-account-to-use-heartstream"><span class="signinwithyourgoogleaccounttouseheartstream_span">Sign in with your Google account to use HeartStream</span></div>
+      <div class="heart-logo-signin">
+        <svg class="heart-ecg-icon-signin" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Heart outline -->
+          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
+                stroke="rgba(255, 255, 255, 0.7)" 
+                stroke-width="5" 
+                fill="none"/>
+          
+          <!-- ECG line through heart -->
+          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
+                stroke="rgba(255, 255, 255, 0.8)" 
+                stroke-width="5" 
+                fill="none"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="arrowleft-md" on:click={goBackFromSignIn}>
+        <div class="vector"></div>
+      </div>
+      <div class="rectangle-2" on:click={signInWithGoogle}>
+        <img src="./assets/google.png" alt="Google" class="google-icon" />
+        <div class="sign-in-with-google"><span class="signinwithgoogle_span">Sign in with Google</span></div>
+      </div>
+    </div>
+  {:else if showPreferencesPage}
+    <div class="preference">
+      <div class="ellipse-1"></div>
+      
+      <div class="save-your-preferences"><span class="saveyourpreferences_span">Save Your Preferences</span></div>
+      <div class="arrowleft-md" on:click={goBackFromPreferences}>
+        <div class="vector"></div>
+      </div>
+      
+      <!-- Popularity Section -->
+      <div class="section-title pos-top-193"><span class="section-title-span">Popularity</span></div>
+      <div class="section-description pos-top-223"><span class="section-description-span">Do you vibe more with chart-toppers or hidden gems?</span></div>
+      <div class="option-button left pos-top-260 {userPreferences.popularity === 'chart-toppers' ? 'selected' : ''}" on:click={() => selectPopularity('chart-toppers')}></div>
+      <div class="option-button right pos-top-260 {userPreferences.popularity === 'hidden-gems' ? 'selected' : ''}" on:click={() => selectPopularity('hidden-gems')}></div>
+      <div class="option-label left pos-top-267">Chart-Toppers</div>
+      <div class="option-label right pos-top-267">Hidden Gems</div>
+      
+      <!-- Danceability Section -->
+      <div class="section-title pos-top-330"><span class="section-title-span">Danceability</span></div>
+      <div class="section-description pos-top-364"><span class="section-description-span">How much groove do you want in your music?</span></div>
+      <div class="section-labels left pos-top-445"><span class="section-labels">Mild groove</span></div>
+      <div class="section-labels right pos-top-445"><span class="section-labels">Dancefloor-ready</span></div>
+      <div class="rating-group pos-top-401">
+        {#each Array(5) as _, i}
+          <div class="rating-circle {userPreferences.danceability === i + 1 ? 'selected' : ''}" on:click={() => selectDanceability(i + 1)}></div>
         {/each}
-      </ul>
-    </div>
-  {/if}
-
-  {#if currentVideoId}
-    <div class="youtube-player">
-      <div id="yt-player"></div>
+      </div>
+      
+      <!-- Speechiness Section -->
+      <div class="section-title pos-top-494"><span class="section-title-span">Speechness</span></div>
+      <div class="section-description pos-top-528"><span class="section-description-span">Do you like lyric-heavy songs or more instrumental vibes?</span></div>
+      <div class="rating-group pos-top-565">
+        {#each Array(5) as _, i}
+          <div class="rating-circle {userPreferences.speechiness === i + 1 ? 'selected' : ''}" on:click={() => selectSpeechiness(i + 1)}></div>
+        {/each}
+      </div>
+      <div class="section-labels left pos-top-609"><span class="section-labels">Instrumental</span></div>
+      <div class="section-labels right pos-top-609"><span class="section-labels">Lyric-focused</span></div>
+      
+      <!-- Energy Section -->
+      <div class="section-title pos-top-658"><span class="section-title-span">Energy</span></div>
+      <div class="section-description pos-top-692"><span class="section-description-span">How intense do you want your music to feel?</span></div>
+      <div class="slider-container pos-top-740">
+        <input type="range" min="0" max="1" step="0.1" bind:value={userPreferences.energy} class="slider-input" />
+      </div>
+      <div class="slider-indicator pos-top-736" style="left: {41 + (userPreferences.energy * 311)}px;"></div>
+      
+      <!-- Continue Button -->
+      <div class="action-button pos-top-802" on:click={saveUserPreferences}>
+        <span class="action-button-text">Continue</span>
+      </div>
     </div>
   {/if}
 </div>
