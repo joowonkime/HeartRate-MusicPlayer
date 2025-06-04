@@ -399,9 +399,9 @@
       <div class="description-text">
         <span>HeartStream is a music app that syncs with your heartbeat to instantly play the perfect song</span>
       </div>
-      <div class="continue-button" on:click={continueToApp}>
+      <button class="continue-button" on:click={continueToApp} type="button" aria-label="Continue to sign in">
         <span class="continue_span">Continue</span>
-      </div>
+      </button>
       <div class="black-bg"></div>
       <div class="heart-logo-welcome">
         <svg class="heart-ecg-icon-small" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -444,28 +444,28 @@
                 stroke-linejoin="round"/>
         </svg>
       </div>
-      <div class="arrowleft-md" on:click={goBackFromSignIn}>
+      <button class="arrowleft-md" on:click={goBackFromSignIn} type="button" aria-label="Go back to welcome page">
         <div class="vector"></div>
-      </div>
-      <div class="rectangle-2" on:click={signInWithGoogle}>
+      </button>
+      <button class="rectangle-2" on:click={signInWithGoogle} type="button" aria-label="Sign in with Google">
         <img src="./assets/google.png" alt="Google" class="google-icon" />
         <div class="sign-in-with-google"><span class="signinwithgoogle_span">Sign in with Google</span></div>
-      </div>
+      </button>
     </div>
   {:else if showPreferencesPage}
     <div class="preference">
       <div class="ellipse-1"></div>
       
       <div class="save-your-preferences"><span class="saveyourpreferences_span">Save Your Preferences</span></div>
-      <div class="arrowleft-md" on:click={goBackFromPreferences}>
+      <button class="arrowleft-md" on:click={goBackFromPreferences} type="button" aria-label="Go back to sign in page">
         <div class="vector"></div>
-      </div>
+      </button>
       
       <!-- Popularity Section -->
       <div class="section-title pos-top-193"><span class="section-title-span">Popularity</span></div>
       <div class="section-description pos-top-223"><span class="section-description-span">Do you vibe more with chart-toppers or hidden gems?</span></div>
-      <div class="option-button left pos-top-260 {userPreferences.popularity === 'chart-toppers' ? 'selected' : ''}" on:click={() => selectPopularity('chart-toppers')}></div>
-      <div class="option-button right pos-top-260 {userPreferences.popularity === 'hidden-gems' ? 'selected' : ''}" on:click={() => selectPopularity('hidden-gems')}></div>
+      <button class="option-button left pos-top-260 {userPreferences.popularity === 'chart-toppers' ? 'selected' : ''}" on:click={() => selectPopularity('chart-toppers')} type="button" aria-label="Select chart-toppers" aria-pressed={userPreferences.popularity === 'chart-toppers'}></button>
+      <button class="option-button right pos-top-260 {userPreferences.popularity === 'hidden-gems' ? 'selected' : ''}" on:click={() => selectPopularity('hidden-gems')} type="button" aria-label="Select hidden gems" aria-pressed={userPreferences.popularity === 'hidden-gems'}></button>
       <div class="option-label left pos-top-267">Chart-Toppers</div>
       <div class="option-label right pos-top-267">Hidden Gems</div>
       
@@ -476,7 +476,7 @@
       <div class="section-labels right pos-top-445"><span class="section-labels">Dancefloor-ready</span></div>
       <div class="rating-group pos-top-401">
         {#each Array(5) as _, i}
-          <div class="rating-circle {userPreferences.danceability === i + 1 ? 'selected' : ''}" on:click={() => selectDanceability(i + 1)}></div>
+          <button class="rating-circle {userPreferences.danceability === i + 1 ? 'selected' : ''}" on:click={() => selectDanceability(i + 1)} type="button" aria-label="Select danceability level {i + 1}" aria-pressed={userPreferences.danceability === i + 1}></button>
         {/each}
       </div>
       
@@ -485,7 +485,7 @@
       <div class="section-description pos-top-528"><span class="section-description-span">Do you like lyric-heavy songs or more instrumental vibes?</span></div>
       <div class="rating-group pos-top-565">
         {#each Array(5) as _, i}
-          <div class="rating-circle {userPreferences.speechiness === i + 1 ? 'selected' : ''}" on:click={() => selectSpeechiness(i + 1)}></div>
+          <button class="rating-circle {userPreferences.speechiness === i + 1 ? 'selected' : ''}" on:click={() => selectSpeechiness(i + 1)} type="button" aria-label="Select speechiness level {i + 1}" aria-pressed={userPreferences.speechiness === i + 1}></button>
         {/each}
       </div>
       <div class="section-labels left pos-top-609"><span class="section-labels">Instrumental</span></div>
@@ -500,9 +500,9 @@
       <div class="slider-indicator pos-top-736" style="left: {41 + (userPreferences.energy * 311)}px;"></div>
       
       <!-- Continue Button -->
-      <div class="action-button pos-top-802" on:click={saveUserPreferences}>
+      <button class="action-button pos-top-802" on:click={saveUserPreferences} type="button" aria-label="Save preferences and continue">
         <span class="action-button-text">Continue</span>
-      </div>
+      </button>
     </div>
   {/if}
 </div>

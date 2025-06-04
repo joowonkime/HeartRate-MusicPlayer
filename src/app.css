@@ -45,6 +45,46 @@ body {
 .text-white { color: var(--color-text); }
 .overflow-hidden { overflow: hidden; }
 
+/* Position Utility Classes */
+.pos-top-193 { position: absolute; top: 193px; width: 350px; left: 40px; }
+.pos-top-223 { position: absolute; top: 223px; width: 367px; left: 40px; }
+.pos-top-260 { position: absolute; top: 260px; }
+.pos-top-267 { position: absolute; top: 267px; }
+.pos-top-330 { position: absolute; top: 330px; width: 350px; left: 40px; }
+.pos-top-364 { position: absolute; top: 364px; width: 367px; left: 40px; }
+.pos-top-401 { position: absolute; top: 401px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
+.pos-top-445 { position: absolute; top: 445px; width: 120px; }
+.pos-top-445.left { left: 50px; text-align: left; }
+.pos-top-445.right { right: 50px; text-align: right; }
+.pos-top-494 { position: absolute; top: 494px; width: 350px; left: 40px; }
+.pos-top-528 { position: absolute; top: 528px; width: 367px; left: 40px; }
+.pos-top-565 { position: absolute; top: 565px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
+.pos-top-609 { position: absolute; top: 609px; width: 120px; }
+.pos-top-609.left { left: 50px; text-align: left; }
+.pos-top-609.right { right: 50px; text-align: right; }
+.pos-top-658 { position: absolute; top: 658px; width: 350px; left: 40px; }
+.pos-top-692 { position: absolute; top: 692px; width: 367px; left: 40px; }
+.pos-top-736 { position: absolute; top: 736px; }
+.pos-top-740 { position: absolute; top: 740px; width: 351px; left: 41px; }
+.pos-top-802 { position: absolute; top: 802px; width: 352px; left: 41px; }
+
+/* Universal Button Reset */
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
 /* Typography Base Classes */
 .font-kode { font-family: var(--font-kode); }
 .font-gothic { font-family: var(--font-gothic); }
@@ -170,7 +210,7 @@ body {
   width: 144px;
   height: 40px;
   padding: 11px 11px;
-  left: 135px;
+  left: 142px;
   top: 740px;
   background: white;
   box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.30);
@@ -256,21 +296,6 @@ body {
 /* Legacy support */
 a { font-weight: 500; color: #646cff; text-decoration: inherit; }
 a:hover { color: #535bf2; }
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover { border-color: #646cff; }
-button:focus, button:focus-visible { outline: 4px auto -webkit-focus-ring-color; }
 
 @media (prefers-color-scheme: light) {
   :root { color: #213547; background-color: #ffffff; }
@@ -758,7 +783,7 @@ button:focus, button:focus-visible { outline: 4px auto -webkit-focus-ring-color;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-}
+  }
 
 .action-button:hover {
   background: #333;
@@ -772,23 +797,6 @@ button:focus, button:focus-visible { outline: 4px auto -webkit-focus-ring-color;
   line-height: 22px;
 }
 
-/* Universal Positioning System */
-.pos-top-193 { top: 193px; }
-.pos-top-223 { top: 223px; }
-.pos-top-260 { top: 260px; }
-.pos-top-267 { top: 267px; }
-.pos-top-330 { top: 330px; }
-.pos-top-364 { top: 364px; }
-.pos-top-401 { top: 401px; }
-.pos-top-445 { top: 445px; }
-.pos-top-494 { top: 494px; }
-.pos-top-528 { top: 528px; }
-.pos-top-565 { top: 565px; }
-.pos-top-609 { top: 609px; }
-.pos-top-658 { top: 658px; }
-.pos-top-692 { top: 692px; }
-.pos-top-736 { top: 736px; }
-.pos-top-740 { top: 740px; }
-.pos-top-802 { top: 802px; }
+/* Legacy support */
 
 /* Universal Interactive Elements */

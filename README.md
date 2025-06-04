@@ -14,34 +14,62 @@ Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also pow
 
 **Why use this over SvelteKit?**
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-
-This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
-
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
-
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
-
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
-
-**Why include `.vscode/extensions.json`?**
-
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
-
-**Why enable `checkJs` in the JS template?**
-
-It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```js
-// store.js
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+```mermaid
+graph TD
+    A[Landing Page] --> B[User Taps Login]
+    B --> C[Login Authentication System]
+    C --> D{Authentication Success?}
+    D -->|No| C
+    D -->|Yes| E[System: Load User Profile]
+    E --> F[Preference Settings Page]
+    F --> G[User: Configure Preferences]
+    G --> H[System: Save Preferences]
+    H --> I[Home Player Page]
+    
+    %% Main App Flow
+    I --> J[User: Taps 'Start Monitoring']
+    J --> K[System: Request Heartbeat Sensor]
+    K --> L[User: Attach Heartbeat Sensor]
+    L --> M[System: Verify Sensor Connection]
+    M --> N{Sensor Connected?}
+    N -->|No| O[System: Show Error Message]
+    O --> L
+    N -->|Yes| P[System: Start Session]
+    P --> Q[Music Playing Interface]
+    
+    %% Music Playing Flow
+    Q --> R[System: Display Current Track]
+    R --> S[User: Can Skip Songs]
+    S --> T[System: Load Next Track]
+    T --> U[User: Taps 'Next']
+    U --> V[System: Update Song History]
+    V --> T
+    
+    %% Session End Flow
+    Q --> W[User: Taps 'Stop']
+    W --> X[System: End Session]
+    X --> Y[System: Generate BPM Graph]
+    Y --> Z[System: Compile Song History]
+    Z --> AA[Session Summary View]
+    AA --> BB[User: Views BPM Graph]
+    AA --> CC[User: Views Song History]
+    
+    %% Navigation to My Page
+    I --> DD[User: Navigate to My Page]
+    DD --> EE[My Page]
+    EE --> FF[User: Access Song History]
+    EE --> GG[User: Access Rating]
+    FF --> HH[Song History Page]
+    GG --> II[Rating Page]
+    
+    %% Styling
+    classDef userAction fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef systemAction fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef decision fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef page fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    
+    class B,G,J,L,S,U,W,BB,CC,DD,FF,GG userAction
+    class C,E,H,K,M,P,R,T,V,X,Y,Z systemAction
+    class D,N decision
+    class A,F,I,Q,AA,EE,HH,II page
+   ```
