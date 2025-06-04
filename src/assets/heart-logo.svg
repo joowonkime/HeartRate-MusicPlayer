@@ -1,0 +1,15 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Heart outline -->
+  <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
+        stroke="rgba(255, 255, 255, 0.9)" 
+        stroke-width="6" 
+        fill="none"/>
+  
+  <!-- ECG line through heart -->
+  <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
+        stroke="rgba(255, 255, 255, 0.9)" 
+        stroke-width="6" 
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+</svg> 

@@ -5,6 +5,7 @@
   import { searchYoutubeVideo } from "./lib/youtube-api";
   import { auth } from "./lib/firebase";
   import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+  import HeartLogo from "./assets/heart-logo.svg";
 
   let currentBpm: number | null = null;
   let lastUpdated: number | null = null;
@@ -369,21 +370,7 @@
       <div class="ellipse-1"></div>
       
       <div class="heart-logo">
-        <svg class="heart-ecg-icon" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Heart outline -->
-          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
-                stroke="rgba(255, 255, 255, 0.7)" 
-                stroke-width="6" 
-                fill="none"/>
-          
-          <!-- ECG line through heart -->
-          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
-                stroke="rgba(255, 255, 255, 0.8)" 
-                stroke-width="6" 
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
-        </svg>
+        <img src={HeartLogo} alt="HeartStream Logo" class="heart-ecg-icon" />
       </div>
 
       <div class="app-title">HEARTSTREAM</div>
@@ -404,21 +391,7 @@
       </button>
       <div class="black-bg"></div>
       <div class="heart-logo-welcome">
-        <svg class="heart-ecg-icon-small" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Heart outline -->
-          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
-                stroke="rgba(255, 255, 255, 0.9)" 
-                stroke-width="6" 
-                fill="none"/>
-          
-          <!-- ECG line through heart -->
-          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
-                stroke="rgba(255, 255, 255, 0.9)" 
-                stroke-width="6" 
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
-        </svg>
+        <img src={HeartLogo} alt="HeartStream Logo" class="heart-ecg-icon-small" />
       </div>
     </div>
   {:else if showSignInPage}
@@ -428,21 +401,7 @@
       <div class="setup-your-profile"><span class="setupyourprofile_span">Setup your profile</span></div>
       <div class="sign-in-with-your-google-account-to-use-heartstream"><span class="signinwithyourgoogleaccounttouseheartstream_span">Sign in with your Google account to use HeartStream</span></div>
       <div class="heart-logo-signin">
-        <svg class="heart-ecg-icon-signin" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Heart outline -->
-          <path d="M100 160C100 160 25 120 25 70C25 45 45 25 70 25C82.5 25 92.5 32.5 100 42.5C107.5 32.5 117.5 25 130 25C155 25 175 45 175 70C175 120 100 160 100 160Z" 
-                stroke="rgba(255, 255, 255, 0.7)" 
-                stroke-width="5" 
-                fill="none"/>
-          
-          <!-- ECG line through heart -->
-          <path d="M30 95 L60 95 L70 75 L80 115 L90 95 L95 95 L105 95 L110 75 L120 115 L130 95 L170 95" 
-                stroke="rgba(255, 255, 255, 0.8)" 
-                stroke-width="5" 
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"/>
-        </svg>
+        <img src={HeartLogo} alt="HeartStream Logo" class="heart-ecg-icon-signin" />
       </div>
       <button class="arrowleft-md" on:click={goBackFromSignIn} type="button" aria-label="Go back to welcome page">
         <div class="vector"></div>
@@ -495,7 +454,7 @@
       <div class="section-title pos-top-658"><span class="section-title-span">Energy</span></div>
       <div class="section-description pos-top-692"><span class="section-description-span">How intense do you want your music to feel?</span></div>
       <div class="slider-container pos-top-740">
-        <input type="range" min="0" max="1" step="0.1" bind:value={userPreferences.energy} class="slider-input" />
+        <input type="range" min="0" max="1" step="0.1" bind:value={userPreferences.energy} on:input={updateEnergyLevel} class="slider-input" />
       </div>
       <div class="slider-indicator pos-top-736" style="left: {41 + (userPreferences.energy * 311)}px;"></div>
       

@@ -55,7 +55,7 @@ body {
 .pos-top-401 { position: absolute; top: 401px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
 .pos-top-445 { position: absolute; top: 445px; width: 120px; }
 .pos-top-445.left { left: 50px; text-align: left; }
-.pos-top-445.right { right: 50px; text-align: right; }
+.pos-top-445.right { right:50px; text-align: right; }
 .pos-top-494 { position: absolute; top: 494px; width: 350px; left: 40px; }
 .pos-top-528 { position: absolute; top: 528px; width: 367px; left: 40px; }
 .pos-top-565 { position: absolute; top: 565px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
