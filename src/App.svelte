@@ -59,6 +59,7 @@
     maybeLoadMoreRecommendations,
     handleSearch,
     searchByKey,
+    skipToNext,
     // Types
     type TrackInfo,
     type AudioFeature,
@@ -547,6 +548,15 @@
           aria-label="{$isPlaying ? 'Pause' : 'Play'} music"
         >
           <div class="play-pause-icon {$isPlaying ? 'pause' : 'play'}"></div>
+        </button>
+        
+        <button 
+          class="skip-button" 
+          on:click={skipToNext} 
+          type="button" 
+          aria-label="Skip to next song"
+        >
+          <div class="skip-icon">⏭</div>
         </button>
         
         <div class="track-title">

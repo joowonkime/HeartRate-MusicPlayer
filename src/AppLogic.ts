@@ -462,8 +462,7 @@ export function initYouTubePlayer() {
     videoId: $currentVideoId,
     playerVars: {
       autoplay: 1,
-      controls: 1,
-      origin: window.location.origin
+      controls: 1
     },
     events: {
       onStateChange: onPlayerStateChange,
@@ -474,33 +473,50 @@ export function initYouTubePlayer() {
 }
 
 export function onPlayerReady(event: any) {
-  // Start tracking progress
-  trackProgress();
+  console.log("YouTube player is ready!");
+  // Give the player a moment to fully initialize
+  setTimeout(() => {
+    trackProgress();
+  }, 1000);
 }
 
 export function trackProgress() {
   const $player = get(player);
-  if (!$player || !$player.getCurrentTime || !$player.getDuration) return;
+  if (!$player || !$player.getCurrentTime || !$player.getDuration) {
+    console.log("Player not ready for progress tracking");
+    return;
+  }
+  
+  console.log("Starting progress tracking");
   
   const updateProgress = () => {
     try {
       const currentTime = $player.getCurrentTime();
       const duration = $player.getDuration();
-      const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
       
-      songCurrentTime.set(currentTime);
-      songDuration.set(duration);
-      songProgress.set(progress);
+      if (duration && duration > 0) {
+        const progress = (currentTime / duration) * 100;
+        
+        songCurrentTime.set(currentTime);
+        songDuration.set(duration);
+        songProgress.set(progress);
+      }
     } catch (e) {
-      // Player not ready yet
+      console.log("Error tracking progress:", e);
     }
   };
   
   // Update progress every 500ms
   const progressInterval = setInterval(() => {
-    if ($player && $player.getPlayerState && $player.getPlayerState() === 1) { // Playing state
-      updateProgress();
-    } else if (!$player || $player.getPlayerState() === 0) { // Ended or destroyed
+    try {
+      if ($player && $player.getPlayerState && $player.getPlayerState() === 1) { // Playing state
+        updateProgress();
+      } else if (!$player || $player.getPlayerState() === 0) { // Ended or destroyed
+        console.log("Clearing progress interval - player ended or destroyed");
+        clearInterval(progressInterval);
+      }
+    } catch (e) {
+      console.log("Error in progress interval:", e);
       clearInterval(progressInterval);
     }
   }, 500);
@@ -533,6 +549,18 @@ export function togglePlayPause() {
     $player.pauseVideo();
   } else {
     $player.playVideo();
+  }
+}
+
+export function skipToNext() {
+  const $currentIndex = get(currentIndex);
+  const $recommendations = get(recommendations);
+  const nextIndex = $currentIndex + 1;
+  
+  if (nextIndex < $recommendations.length) {
+    playRecommendation(nextIndex);
+  } else {
+    console.log("No more songs in the playlist");
   }
 }
 
