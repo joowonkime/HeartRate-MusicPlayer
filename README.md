@@ -1,75 +1,264 @@
-# Svelte + Vite
+# HeartStream - Heart Rate-Based Music Player 🎵💓
 
-This template should help get you started developing with Svelte in Vite.
+HeartStream is an innovative music streaming application that uses real-time heart rate data to curate and play the perfect music for your current mood and activity level. Built with Svelte, Firebase, and the YouTube API, it creates a personalized listening experience that adapts to your physiological state.
 
-## Recommended IDE Setup
+## ✨ Features
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+### 🫀 Heart Rate Integration
+- **Real-time BPM monitoring** through connected heart rate sensors
+- **Dynamic music matching** based on current heart rate
+- **Adaptive tempo selection** that syncs with your cardiovascular rhythm
 
-## Need an official Svelte framework?
+### 🎯 Advanced Music Recommendation
+- **Hybrid recommendation algorithm** combining:
+  - BPM-based tempo matching
+  - Audio feature analysis (energy, danceability, valence, etc.)
+  - User preference weighting
+  - Multi-dimensional Euclidean distance calculations
+- **Smart song disambiguation** for tracks with multiple artists
+- **Infinite playlist generation** with seamless playback
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+### 👤 Personalized Experience
+- **User preference profiling**:
+  - Energy level preferences (0-1 scale)
+  - Music popularity preferences (chart-toppers vs. hidden gems)
+  - Danceability rating (1-5 scale)
+  - Speechiness preferences (instrumental vs. lyric-focused)
+- **Google Authentication** with persistent user profiles
+- **Firebase integration** for user data and preferences storage
 
-## Technical considerations
+### 🎮 Intuitive Interface
+- **Modern glassmorphism design** with smooth animations
+- **Real-time progress tracking** with visual progress bars
+- **Dynamic play/pause controls** that adapt to player state
+- **ECG-style visualization** with animated heart rate display
+- **Mobile-optimized** responsive design (433px width)
 
-**Why use this over SvelteKit?**
+### 🎵 Music Playback
+- **YouTube integration** for unlimited music access
+- **Lazy loading** - only searches for videos when songs are played
+- **Error handling** with automatic fallback to next track
+- **Queue management** maintaining 11 songs ahead automatically
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v16 or higher)
+- npm or yarn
+- Firebase project with Realtime Database
+- YouTube Data API v3 key
+- Heart rate sensor (optional for full functionality)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd HeartRate-MusicPlayer
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Firebase configuration**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication and Realtime Database
+   - Add your Firebase config to `src/lib/firebase.ts`
+
+4. **Configure YouTube API**
+   - Get YouTube Data API v3 key from [Google Cloud Console](https://console.cloud.google.com/)
+   - Add your API key to `src/lib/youtube-api.ts`
+
+5. **Set up the database**
+   - Import audio features data to Firebase Realtime Database
+   - Structure: `/audioFeatures/{trackId}` containing Spotify audio feature data
+
+6. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+## 🏗️ Architecture
+
+### Technology Stack
+- **Frontend**: Svelte + TypeScript + Vite
+- **Backend**: Firebase (Authentication + Realtime Database)
+- **Music API**: YouTube Data API v3
+- **Styling**: Custom CSS with CSS custom properties
+
+### Key Components
+
+```
+src/
+├── App.svelte              # Main application component
+├── lib/
+│   ├── firebase.ts         # Firebase configuration
+│   └── youtube-api.ts      # YouTube API integration
+├── app.css                 # Global styles and design system
+└── assets/                 # Static assets (logos, images)
+```
+
+### Data Flow
 
 ```mermaid
 graph TD
-    A[Landing Page] --> B[User Taps Login]
-    B --> C[Login Authentication System]
-    C --> D{Authentication Success?}
-    D -->|No| C
-    D -->|Yes| E[System: Load User Profile]
-    E --> F[Preference Settings Page]
-    F --> G[User: Configure Preferences]
-    G --> H[System: Save Preferences]
-    H --> I[Home Player Page]
+    A[Heart Rate Sensor] --> B[Firebase Realtime DB]
+    B --> C[Heart Rate Monitor]
+    C --> D[Recommendation Algorithm]
     
-    %% Main App Flow
-    I --> J[User: Taps 'Start Monitoring']
-    J --> K[System: Request Heartbeat Sensor]
-    K --> L[User: Attach Heartbeat Sensor]
-    L --> M[System: Verify Sensor Connection]
-    M --> N{Sensor Connected?}
-    N -->|No| O[System: Show Error Message]
-    O --> L
-    N -->|Yes| P[System: Start Session]
-    P --> Q[Music Playing Interface]
+    E[User Preferences] --> D
+    F[Audio Features DB] --> D
     
-    %% Music Playing Flow
-    Q --> R[System: Display Current Track]
-    R --> S[User: Can Skip Songs]
-    S --> T[System: Load Next Track]
-    T --> U[User: Taps 'Next']
-    U --> V[System: Update Song History]
-    V --> T
+    D --> G[Music Recommendations]
+    G --> H[YouTube API Search]
+    H --> I[Music Player]
     
-    %% Session End Flow
-    Q --> W[User: Taps 'Stop']
-    W --> X[System: End Session]
-    X --> Y[System: Generate BPM Graph]
-    Y --> Z[System: Compile Song History]
-    Z --> AA[Session Summary View]
-    AA --> BB[User: Views BPM Graph]
-    AA --> CC[User: Views Song History]
+    I --> J[Progress Tracking]
+    J --> K[UI Updates]
     
-    %% Navigation to My Page
-    I --> DD[User: Navigate to My Page]
-    DD --> EE[My Page]
-    EE --> FF[User: Access Song History]
-    EE --> GG[User: Access Rating]
-    FF --> HH[Song History Page]
-    GG --> II[Rating Page]
-    
-    %% Styling
-    classDef userAction fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef systemAction fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef decision fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef page fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
-    
-    class B,G,J,L,S,U,W,BB,CC,DD,FF,GG userAction
-    class C,E,H,K,M,P,R,T,V,X,Y,Z systemAction
-    class D,N decision
-    class A,F,I,Q,AA,EE,HH,II page
+    style A fill:#ff6b6b
+    style D fill:#4ecdc4
+    style I fill:#45b7d1
+```
+
+## 🎛️ User Journey
+
+1. **Launch Screen** - HeartStream logo animation (3s)
+2. **Welcome Page** - Introduction and continue button
+3. **Authentication** - Google sign-in integration
+4. **Preferences Setup** - Music taste configuration (first-time users)
+5. **Sensor Connection** - Heart rate sensor pairing
+6. **Home Dashboard** - Heart rate display and music search
+7. **Music Discovery** - Search and recommendation interface
+8. **Playback Control** - Full-featured music player
+
+## 🧮 Recommendation Algorithm
+
+The core recommendation system uses a **hybrid distance algorithm** that considers:
+
+### Audio Feature Analysis
+- **Danceability**: How suitable a track is for dancing
+- **Energy**: Perceptual measure of intensity and activity
+- **Valence**: Musical positiveness conveyed by a track
+- **Instrumentalness**: Predicts whether a track contains vocals
+- **Liveness**: Detects presence of audience in recording
+
+### Heart Rate Integration
+```javascript
+function hybridDistance(candidate, base, userPreferences) {
+  // Calculate audio feature distance
+  let audioDistance = euclideanDistance(candidate, base, userPreferences);
+  
+  // Add BPM weighting based on current heart rate
+  let bpmWeight = Math.min(currentBPM / 200, 1);
+  let bpmDistance = bpmWeight * Math.abs(candidate.tempo - currentBPM);
+  
+  return Math.sqrt(audioDistance² + bpmDistance²);
+}
+```
+
+## 🎨 Design System
+
+### Color Palette
+- **Primary**: #121111 (Deep black)
+- **Accent**: rgba(255, 34.61, 75.02, 0.80) (Heart red)
+- **Text**: #ffffff (White)
+- **Text Muted**: #C4C4C4 (Light gray)
+
+### Typography
+- **Primary**: Apple SD Gothic Neo (Korean optimized)
+- **Monospace**: Kode Mono (technical elements)
+- **System**: -apple-system, BlinkMacSystemFont (fallback)
+
+### Effects
+- **Glassmorphism**: backdrop-filter blur effects
+- **Gradient overlays**: Multi-layered background effects
+- **Smooth animations**: 0.3s ease transitions
+- **ECG visualization**: Animated heart rhythm display
+
+## 🔧 Configuration
+
+### Firebase Setup
+```javascript
+// src/lib/firebase.ts
+const firebaseConfig = {
+  apiKey: "your-api-key",
+  authDomain: "your-domain.firebaseapp.com",
+  databaseURL: "https://your-db.firebasedatabase.app/",
+  projectId: "your-project-id"
+};
+```
+
+### Database Structure
+```
+{
+  "heart_rate": {
+    "current_bpm": 75,
+    "last_updated": 1640995200000
+  },
+  "audioFeatures": {
+    "track_id_1": {
+      "track_name": "Song Title",
+      "artist_name": "Artist Name",
+      "tempo": 120,
+      "energy": 0.8,
+      "danceability": 0.7,
+      // ... other Spotify audio features
+    }
+  },
+  "users": {
+    "user_id": {
+      "preferences": {
+        "energy": 0.5,
+        "popularity": "hidden-gems",
+        "danceability": 3,
+        "speechiness": 3
+      }
+    }
+  }
+}
+```
+
+## 🚀 Deployment
+
+1. **Build the application**
+   ```bash
+   npm run build
    ```
+
+2. **Deploy to your preferred platform**
+   - Vercel: `vercel --prod`
+   - Netlify: Drag `dist/` folder to Netlify
+   - Firebase Hosting: `firebase deploy`
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **Spotify Web API** for audio feature data structure
+- **YouTube API** for music streaming capabilities
+- **Firebase** for real-time database and authentication
+- **Svelte** for the reactive UI framework
+
+## 📞 Support
+
+For questions, issues, or feature requests, please:
+- Open an issue on GitHub
+- Check existing documentation
+- Review the troubleshooting guide
+
+---
+
+**HeartStream** - *Music that moves with your heartbeat* 💓🎵
