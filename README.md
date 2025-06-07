@@ -1,14 +1,38 @@
-# HeartStream - Heart Rate-Based Music Player 🎵💓
+# HeartStream - Heart Rate-Based Music Player
 
-HeartStream is an innovative music streaming application that uses real-time heart rate data to curate and play the perfect music for your current mood and activity level. Built with Svelte, Firebase, and the YouTube API, it creates a personalized listening experience that adapts to your physiological state.
+<div align="left">
+
+![Status](https://img.shields.io/badge/status-functional-brightgreen?style=flat-square)
+![Demo](https://img.shields.io/badge/demo-available-blue?style=flat-square)
+![Hardware](https://img.shields.io/badge/hardware-integrated-orange?style=flat-square)
+![Real Time](https://img.shields.io/badge/real--time-heart%20rate-red?style=flat-square)
+![Music](https://img.shields.io/badge/music-adaptive-purple?style=flat-square)
+
+</div>
+
+<br>
+
+<div align="left">
+  <img src="public/assets/launching.png" alt="HeartStream Launch Screen" width="500">
+</div>
+
+<br>
+
+**HeartStream** is an innovative music streaming application that uses real-time heart rate data to curate and play the perfect music for your current mood and activity level. Built with Svelte, Firebase, and the YouTube API, it creates a personalized listening experience that adapts to your physiological state.
+
 
 ## ✨ Features
 
 ### 🫀 Heart Rate Integration
+<div align= "left">
+  <img src="public/assets/bpm.png" alt="bpm integration" width="400">
+</div>
+
 - **Real-time BPM monitoring** through connected heart rate sensors
 - **Dynamic music matching** based on current heart rate
 - **Adaptive tempo selection** that syncs with your cardiovascular rhythm
 - **Threshold-based playlist updates** (>20 BPM change triggers new recommendations)
+
 
 ### 🎯 Advanced Music Recommendation
 - **Hybrid recommendation algorithm** combining:
@@ -16,11 +40,14 @@ HeartStream is an innovative music streaming application that uses real-time hea
   - Audio feature analysis (energy, danceability, valence, etc.)
   - User preference weighting
   - Multi-dimensional Euclidean distance calculations
-- **Smart song disambiguation** for tracks with multiple artists
+- **Song disambiguation** for tracks with multiple artists
 - **Infinite playlist generation** with seamless playback
-- **Intelligent queue management** maintaining 11 songs ahead automatically
+- **Queue management** maintaining 11 songs ahead automatically
 
 ### 👤 Personalized Experience
+<div align= "left">
+  <img src="public/assets/preferences.png" alt="User Preference Setting" width="400">
+</div>
 - **User preference profiling**:
   - Energy level preferences (0-1 scale)
   - Music popularity preferences (chart-toppers vs. hidden gems)
@@ -38,7 +65,9 @@ HeartStream is an innovative music streaming application that uses real-time hea
 ### 🎭 Demo Mode
 
 #### 🏃‍♂️ Automated Workout Simulation
-
+<div align="left">
+  <img src="public/assets/demo.png" alt="Demo" width="300">
+</div>
 The demo mode simulates a realistic workout with **6 phases** over approximately **100 seconds**:
 
 1. **Warm-up** (60 → 90 BPM, 15s) - Gentle heart rate increase
@@ -52,12 +81,25 @@ The demo mode simulates a realistic workout with **6 phases** over approximately
 ## 🏗️ Architecture
 
 ### Technology Stack
+
+<div align="left">
+
+![Svelte](https://img.shields.io/badge/svelte-%23f1413d.svg?style=for-the-badge&logo=svelte&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
+![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)
+![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+![Raspberry Pi](https://img.shields.io/badge/-RaspberryPi-C51A4A?style=for-the-badge&logo=Raspberry-Pi)
+
+</div>
+
 - **Frontend**: Svelte + TypeScript + Vite
 - **Backend**: Firebase (Authentication + Realtime Database)
 - **Hardware Bridge**: Python script for Pico-to-Firebase communication
 - **Music API**: YouTube Data API v3
 - **Hardware**: Raspberry Pi Pico + KY-039 Heart Rate Sensor
-- **Styling**: Custom CSS with organized design system
+- **Styling**: Custom CSS 
 
 ### Key Components
 
@@ -72,8 +114,8 @@ src/
 └── assets/                 # Static assets (logos, images)
 
 hardware/
-├── main.py                           # MicroPython script for Raspberry Pi Pico
-└── computer_firebase_bridge.py       # Python serial-to-Firebase bridge
+├── main.py                       # MicroPython script for RPi Pico
+└── computer_firebase_bridge.py   # Python serial-to-Firebase bridge
 ```
 
 ## 🔗 API Integrations
@@ -304,13 +346,13 @@ const firebaseConfig = {
 - **Solution**: Hybrid distance algorithm with weighted euclidean distance and BPM normalization
 
 
+
 ## 🙏 Acknowledgments
 
 - **Spotify Web API** for audio feature data structure
 - **YouTube API** for music streaming capabilities
 - **Firebase** for real-time database and authentication
 - **Svelte** for the reactive UI framework
-
 
 
 
