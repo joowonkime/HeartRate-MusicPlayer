@@ -134,6 +134,7 @@ graph TD
 7. **Music Discovery** - Search and recommendation interface
 8. **Playback Control** - Full-featured music player
 
+
 ## 🧮 Recommendation Algorithm
 
 The core recommendation system uses a **hybrid distance algorithm** that considers:
@@ -158,25 +159,6 @@ function hybridDistance(candidate, base, userPreferences) {
   return Math.sqrt(audioDistance² + bpmDistance²);
 }
 ```
-
-## 🎨 Design System
-
-### Color Palette
-- **Primary**: #121111 (Deep black)
-- **Accent**: rgba(255, 34.61, 75.02, 0.80) (Heart red)
-- **Text**: #ffffff (White)
-- **Text Muted**: #C4C4C4 (Light gray)
-
-### Typography
-- **Primary**: Apple SD Gothic Neo (Korean optimized)
-- **Monospace**: Kode Mono (technical elements)
-- **System**: -apple-system, BlinkMacSystemFont (fallback)
-
-### Effects
-- **Glassmorphism**: backdrop-filter blur effects
-- **Gradient overlays**: Multi-layered background effects
-- **Smooth animations**: 0.3s ease transitions
-- **ECG visualization**: Animated heart rhythm display
 
 ## 🔧 Configuration
 
@@ -221,29 +203,6 @@ const firebaseConfig = {
 }
 ```
 
-## 🚀 Deployment
-
-1. **Build the application**
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy to your preferred platform**
-   - Vercel: `vercel --prod`
-   - Netlify: Drag `dist/` folder to Netlify
-   - Firebase Hosting: `firebase deploy`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 

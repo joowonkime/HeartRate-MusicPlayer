@@ -1,74 +1,43 @@
+/* =================================
+   IMPORTS & ROOT VARIABLES
+   ================================= */
 @import url('https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Font families */
   --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --font-kode: 'Kode Mono', monospace;
   --font-gothic: 'Apple SD Gothic Neo', system-ui, sans-serif;
-  --color-primary: #121111;
+  
+  /* Colors */
+  --color-primary: #000000;
   --color-accent: rgba(255, 34.61, 75.02, 0.80);
   --color-text: white;
   --color-text-muted: #C4C4C4;
   --color-text-secondary: #E5E5E5;
   
+  /* Base styles */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  background-color: #000000;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* =================================
+   BASE ELEMENTS
+   ================================= */
 body {
   margin: 0;
   padding: 0;
   font-family: var(--font-system);
 }
 
-/* Universal Utility Classes */
-.absolute { position: absolute; }
-.relative { position: relative; }
-.flex { display: flex; }
-.flex-center { 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-}
-.text-center { text-align: center; }
-.cursor-pointer { cursor: pointer; }
-.w-full { width: 100%; }
-.h-full { height: 100%; }
-.bg-primary { background: var(--color-primary); }
-.text-white { color: var(--color-text); }
-.overflow-hidden { overflow: hidden; }
-
-/* Position Utility Classes */
-.pos-top-193 { position: absolute; top: 193px; width: 350px; left: 40px; }
-.pos-top-223 { position: absolute; top: 223px; width: 367px; left: 40px; }
-.pos-top-260 { position: absolute; top: 260px; }
-.pos-top-267 { position: absolute; top: 267px; }
-.pos-top-330 { position: absolute; top: 330px; width: 350px; left: 40px; }
-.pos-top-364 { position: absolute; top: 364px; width: 367px; left: 40px; }
-.pos-top-401 { position: absolute; top: 401px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
-.pos-top-445 { position: absolute; top: 445px; width: 120px; }
-.pos-top-445.left { left: 50px; text-align: left; }
-.pos-top-445.right { right:50px; text-align: right; }
-.pos-top-494 { position: absolute; top: 494px; width: 350px; left: 40px; }
-.pos-top-528 { position: absolute; top: 528px; width: 367px; left: 40px; }
-.pos-top-565 { position: absolute; top: 565px; width: 335px; left: 50px; display: flex; justify-content: flex-start; align-items: center; gap: 45px; }
-.pos-top-609 { position: absolute; top: 609px; width: 120px; }
-.pos-top-609.left { left: 50px; text-align: left; }
-.pos-top-609.right { right: 50px; text-align: right; }
-.pos-top-658 { position: absolute; top: 658px; width: 350px; left: 40px; }
-.pos-top-692 { position: absolute; top: 692px; width: 367px; left: 40px; }
-.pos-top-736 { position: absolute; top: 736px; }
-.pos-top-740 { position: absolute; top: 740px; width: 351px; left: 41px; }
-.pos-top-802 { position: absolute; top: 802px; width: 352px; left: 41px; }
-
-/* Universal Button Reset */
 button {
   background: none;
   border: none;
@@ -85,10 +54,18 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Typography Classes */
-.font-kode { font-family: var(--font-kode); }
-.font-gothic { font-family: var(--font-gothic); }
+/* =================================
+   UTILITY CLASSES
+   ================================= */
+.flex-center { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+}
 
+/* =================================
+   TYPOGRAPHY CLASSES
+   ================================= */
 .heading-large {
   font-size: 36px;
   font-weight: 500;
@@ -109,14 +86,6 @@ button:focus-visible {
   font-weight: 700;
   color: var(--color-text);
   font-family: var(--font-gothic);
-}
-
-.text-large {
-  font-size: 50px;
-  font-weight: 800;
-  color: var(--color-text);
-  font-family: var(--font-gothic);
-  letter-spacing: 1px;
 }
 
 .text-medium {
@@ -142,7 +111,9 @@ button:focus-visible {
   letter-spacing: 0.15px;
 }
 
-/* Layout Components */
+/* =================================
+   LAYOUT COMPONENTS
+   ================================= */
 .mobile-container {
   width: 100vw;
   height: 100vh;
@@ -165,7 +136,9 @@ button:focus-visible {
   text-align: center;
 }
 
-/* Background Elements */
+/* =================================
+   BACKGROUND ELEMENTS
+   ================================= */
 .bg-blur {
   background: var(--color-accent);
   box-shadow: 300px 300px 300px;
@@ -195,7 +168,9 @@ button:focus-visible {
   top: 580px;
 }
 
-/* Button Components */
+/* =================================
+   BUTTON COMPONENTS
+   ================================= */
 .btn-primary {
   background: white;
   box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.30);
@@ -215,84 +190,97 @@ button:focus-visible {
   transform: translateY(-2px);
 }
 
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 25px;
-  backdrop-filter: blur(10px);
+/* Standardized main action button */
+.btn-main-action {
+  width: 352px;
+  height: 67px;
+  left: 40px;
+  top: 802px;
+  background: white;
+  box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.30);
+  border-radius: 15px;
   transition: all 0.3s ease;
-  position: absolute;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.2);
-}
-
-.btn-action {
-  background: black;
-  border-radius: 10px;
-  transition: all 0.3s ease;
+  color: black;
+  font-weight: 800;
+  font-family: var(--font-gothic);
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text);
-  font-size: 22px;
-  font-family: var(--font-gothic);
-  font-weight: 800;
   position: absolute;
 }
 
-.btn-action:hover {
-  background: #333;
+.btn-main-action:hover {
+  box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.50);
+  transform: translateY(-2px);
 }
 
-/* Input Components */
-.input-container {
-  background: rgba(0, 0, 0, 0.80);
-  border-radius: 2px;
-  border: 0.60px rgba(255, 255, 255, 0.80) solid;
-  position: absolute;
-}
-
-.input-field {
-  background: transparent;
-  border: none;
-  color: rgba(229.47, 229.47, 229.47, 0.80);
-  font-family: var(--font-gothic);
-  font-weight: 400;
-  outline: none;
-  position: absolute;
-}
-
-.input-field::placeholder {
-  color: rgba(229.47, 229.47, 229.47, 0.80);
-}
-
-/* Card Components */
-.card-gradient {
-  background: linear-gradient(121deg, rgba(127.11, 118.66, 118.66, 0.20) 0%, rgba(217, 217, 217, 0.10) 100%);
-  border-radius: 10px;
-  position: absolute;
-}
-
-.card-overlay {
-  background: rgba(0, 0, 0, 0.9);
-  border-radius: 10px;
-  padding: 20px;
-  position: absolute;
-}
-
-/* Icon Components */
+/* =================================
+   ICON COMPONENTS
+   ================================= */
 .icon-heart {
   opacity: 0.7;
 }
 
-.icon-small { width: 80px; height: 80px; }
-.icon-medium { width: 200px; height: 200px; }
-.icon-large { width: 285px; height: 285px; }
+.icon-small { 
+  width: 80px; 
+  height: 80px; 
+}
 
-/* Interactive Elements */
+.icon-medium { 
+  width: 200px; 
+  height: 200px; 
+}
+
+.icon-large { 
+  width: 285px; 
+  height: 285px; 
+}
+
+/* =================================
+   INSTRUCTION PAGE COMPONENTS
+   ================================= */
+.instruction-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.step-checkmark {
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.step-checkmark::after {
+  content: '';
+  width: 8px;
+  height: 6px;
+  border: 2px solid white;
+  border-top: none;
+  border-right: none;
+  transform: rotate(-45deg) translateY(-1px);
+}
+
+.step-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  font-family: var(--font-system);
+  line-height: 1.4;
+}
+
+/* =================================
+   INTERACTIVE ELEMENTS (Preferences)
+   ================================= */
+
+/* Toggle buttons for popularity selection */
 .option-toggle {
   background: rgba(29, 29, 29, 0.80);
   border-radius: 8px;
@@ -300,12 +288,21 @@ button:focus-visible {
   cursor: pointer;
   transition: all 0.3s ease;
   position: absolute;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-gothic);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .option-toggle.selected {
   background: var(--color-text);
+  color: #1E1E1E;
 }
 
+/* Rating control buttons (1-5 scale) */
 .rating-control {
   width: 30px;
   height: 30px;
@@ -320,6 +317,7 @@ button:focus-visible {
   background: var(--color-text);
 }
 
+/* Energy slider components */
 .slider-track {
   background: rgba(29, 29, 29, 0.80);
   border-radius: 10px;
@@ -335,6 +333,7 @@ button:focus-visible {
   border: 1px rgba(127, 119, 119, 0.50) solid;
   transition: left 0.2s ease;
   position: absolute;
+  pointer-events: none;
 }
 
 .slider-input {
@@ -342,11 +341,49 @@ button:focus-visible {
   height: 100%;
   background: transparent;
   outline: none;
-  opacity: 0;
-  cursor: pointer;
+  opacity: 1;
+  cursor: grab;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
-/* Homepage Specific */
+/* Webkit slider styling */
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 25px;
+  height: 25px;
+  background: var(--color-text);
+  border-radius: 50%;
+  border: 1px solid rgba(127, 119, 119, 0.50);
+  cursor: grab;
+}
+
+.slider-input::-webkit-slider-thumb:active {
+  cursor: grabbing;
+}
+
+/* Firefox slider styling */
+.slider-input::-moz-range-thumb {
+  width: 25px;
+  height: 25px;
+  background: var(--color-text);
+  border-radius: 50%;
+  border: 1px solid rgba(127, 119, 119, 0.50);
+  cursor: grab;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.slider-input::-moz-range-thumb:active {
+  cursor: grabbing;
+}
+
+/* =================================
+   HOMEPAGE SPECIFIC STYLES
+   ================================= */
+
+/* Heart rate display section */
 .heart-rate-label {
   width: 299px;
   height: 30px;
@@ -366,7 +403,7 @@ button:focus-visible {
   left: 37px;
   top: 179px;
   position: absolute;
-  background: linear-gradient(121deg, rgba(127.11, 118.66, 118.66, 0.20) 0%, rgba(217, 217, 217, 0.10) 100%);
+  background: rgba(217, 217, 217, 0.10);
   border-radius: 10px;
 }
 
@@ -397,6 +434,7 @@ button:focus-visible {
   font-weight: 400;
 }
 
+/* User info section */
 .user-welcome {
   left: 92px;
   top: 69px;
@@ -417,6 +455,11 @@ button:focus-visible {
   font-family: var(--font-gothic);
   font-weight: 600;
   letter-spacing: 0.48px;
+  /* Text truncation for long names */
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .user-avatar {
@@ -429,6 +472,7 @@ button:focus-visible {
   outline: 2.50px #AC132F solid;
 }
 
+/* Music search section */
 .section-heading {
   width: 354px;
   height: 30px;
@@ -506,6 +550,7 @@ button:focus-visible {
   transform: rotate(45deg);
 }
 
+/* Sign out button */
 .signout-button {
   width: 64px;
   height: 19px;
@@ -544,6 +589,9 @@ button:focus-visible {
   font-weight: 400;
 }
 
+/* =================================
+   ECG WAVE VISUALIZATION
+   ================================= */
 .ecg-line {
   width: 350px;
   height: 180px;
@@ -551,7 +599,12 @@ button:focus-visible {
   top: 520px;
   position: absolute;
   overflow: hidden;
-  background: linear-gradient(to right, transparent 0%, rgba(172, 19, 47, 0.1) 50%, transparent 100%);
+  background: linear-gradient(
+    to right, 
+    transparent 0%, 
+    rgba(172, 19, 47, 0.1) 50%, 
+    transparent 100%
+  );
 }
 
 .ecg-wave {
@@ -589,7 +642,9 @@ button:focus-visible {
   opacity: 0.3;
 }
 
-/* Music Player */
+/* =================================
+   MUSIC PLAYER COMPONENT
+   ================================= */
 .music-player {
   width: 433px;
   left: 0px;
@@ -626,6 +681,7 @@ button:focus-visible {
   outline-offset: -2px;
 }
 
+/* Play/pause button */
 .play-pause-button {
   width: 38px;
   height: 38px;
@@ -668,6 +724,7 @@ button:focus-visible {
   border-right: 4px solid var(--color-text);
 }
 
+/* Track information */
 .track-title {
   width: 218px;
   height: 31px;
@@ -692,6 +749,7 @@ button:focus-visible {
   font-weight: 500;
 }
 
+/* Progress bar */
 .progress-bar {
   width: 355px;
   height: 3px;
@@ -711,7 +769,11 @@ button:focus-visible {
   min-width: 0;
 }
 
-/* Recommendations Overlay */
+/* =================================
+   OVERLAY COMPONENTS
+   ================================= */
+
+/* Recommendations overlay */
 .recommendations-overlay {
   position: absolute;
   top: 450px;
@@ -830,7 +892,7 @@ button:focus-visible {
   color: var(--color-accent);
 }
 
-/* Disambiguation Interface */
+/* Song disambiguation overlay */
 .disambiguation-overlay {
   position: absolute;
   top: 450px;
@@ -922,7 +984,9 @@ button:focus-visible {
   background: rgba(255, 255, 255, 0.2);
 }
 
-/* Loading and Error States */
+/* =================================
+   LOADING & ERROR STATES
+   ================================= */
 .search-loading {
   position: absolute;
   top: 50%;
@@ -947,30 +1011,11 @@ button:focus-visible {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes musicWave {
-  0% {
-    transform: translateY(-50%) translateX(0);
+  0% { 
+    transform: rotate(0deg); 
   }
-  100% {
-    transform: translateY(-50%) translateX(-100px);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    transform: translateX(-100px);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(120px);
-    opacity: 0;
+  100% { 
+    transform: rotate(360deg); 
   }
 }
 
@@ -1011,14 +1056,4 @@ button:focus-visible {
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
-}
-
-/* Legacy support */
-a { font-weight: 500; color: #646cff; text-decoration: inherit; }
-a:hover { color: #535bf2; }
-
-@media (prefers-color-scheme: light) {
-  :root { color: #213547; background-color: #ffffff; }
-  a:hover { color: #747bff; }
-  button { background-color: #f9f9f9; }
 }
