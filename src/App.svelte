@@ -39,9 +39,7 @@
     buildRecommendations,
     getMoreRecommendations,
     continueToApp,
-    goBackFromSignIn,
-    goBackFromPreferences,
-    goBackFromInstructions,
+
     continueFromInstructions,
     signInWithGoogle,
     signOutUser,
@@ -63,7 +61,15 @@
     // Types
     type TrackInfo,
     type AudioFeature,
-    type Recommendation
+    type Recommendation,
+    isDemoMode,
+    startDemoMode,
+    stopDemoMode,
+    setDemoHeartRate,
+    simulateWorkout,
+    demoWorkoutActive,
+    startWorkoutDemo,
+    stopWorkoutDemo
   } from "./AppLogic";
 
   // Auto-hide launch screen after 3 seconds
@@ -378,6 +384,30 @@
         />
       </div>
       
+      <div class="text-small" style="
+        position: absolute; 
+        top: 770px; 
+        width: 120px; 
+        left: 50px; 
+        text-align: left; 
+        color: rgba(255, 255, 255, 0.70); 
+        font-weight: 600;
+      ">
+        Laid-back
+      </div>
+      
+      <div class="text-small" style="
+        position: absolute; 
+        top: 770px; 
+        width: 120px; 
+        right: 50px; 
+        text-align: right; 
+        color: rgba(255, 255, 255, 0.70); 
+        font-weight: 600;
+      ">
+        Heavy metal
+      </div>
+      
       <!-- Continue Button -->
       <button 
         class="btn-main-action" 
@@ -403,7 +433,7 @@
       <!-- Description Text -->
       <div style="position: absolute; top: 200px; left: 40px; width: 350px;">
         <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px; font-family: var(--font-system); font-weight: 400; line-height: 1.5; margin: 0;">
-          Before we get started, please understand how HeartStream works. Your heart rate will be used to create the perfect music experience for you.
+          Before we get started, please look at how HeartStream works. Your heart rate will be used to create the perfect music experience for you.
         </p>
       </div>
 
@@ -508,7 +538,7 @@
       <div class="heart-rate-container"></div>
       <div class="heart-rate-value">{$currentBpm || '--'}</div>
       <div class="timestamp">
-        Last Update: {$lastUpdated ? new Date($lastUpdated).toLocaleTimeString() : 'No data'}
+        Last Update: {$lastUpdated ? new Date($lastUpdated).toLocaleTimeString('ko-KR', { timeZone: 'Asia/Seoul' }) : 'No data'}
       </div>
       
       <!-- Music Search Section -->
@@ -659,6 +689,42 @@
           <p>{$errorMessage}</p>
           <button on:click={() => errorMessage.set(null)}>Dismiss</button>
         </div>
+      {/if}
+      
+      <!-- Demo Controls (always visible when demo mode is active) -->
+      {#if $isDemoMode}
+        <div class="demo-controls-compact">
+          <div class="demo-header-compact">
+            <span class="demo-status">
+              {#if $demoWorkoutActive}
+                🏃‍♂️ Workout Demo
+              {:else}
+                Demo Mode Active
+              {/if}
+            </span>
+            <button class="demo-close-btn" on:click={stopDemoMode} aria-label="Exit demo mode">×</button>
+          </div>
+          
+          <div class="demo-action">
+            {#if $demoWorkoutActive}
+              <button class="demo-btn-stop" on:click={stopWorkoutDemo}>
+                Stop Workout Demo
+              </button>
+            {:else}
+              <button class="demo-btn-start" on:click={startWorkoutDemo}>
+                Start Workout Demo
+              </button>
+            {/if}
+          </div>
+          
+          <div class="demo-info">
+            <p>🎵 Watch the playlist adapt as heart rate changes!</p>
+          </div>
+        </div>
+      {:else}
+        <button class="quick-demo-btn" on:click={startDemoMode}>
+          Quick Demo
+        </button>
       {/if}
     </div>
   {/if}

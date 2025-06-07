@@ -584,7 +584,7 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   color: #ffffffed;
-  font-size: 13.5px;
+  font-size: 13px;
   font-family: var(--font-gothic);
   font-weight: 400;
 }
@@ -762,6 +762,10 @@ button:focus-visible {
   font-size: 20px;
   font-family: var(--font-gothic);
   font-weight: 600;
+  /* Text truncation for long titles */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .track-artist {
@@ -774,6 +778,10 @@ button:focus-visible {
   font-size: 16px;
   font-family: var(--font-gothic);
   font-weight: 500;
+  /* Text truncation for long artist names */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Progress bar */
@@ -1083,4 +1091,108 @@ button:focus-visible {
   border-radius: 4px;
   margin-top: 10px;
   cursor: pointer;
+}
+
+
+/* =================================
+   DEMO MODE CONTROLS
+   ================================= */
+   
+  .demo-controls-compact {
+  position: absolute;
+  top: 310px;
+  left: 36px;
+  right: 36px;
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(172, 19, 47, 0.6);
+  border-radius: 8px;
+  padding: 15px;
+  z-index: 140;
+  backdrop-filter: blur(10px);
+  max-height: 110px;
+}
+
+.demo-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.demo-status {
+  color: var(--color-accent);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--font-gothic);
+}
+
+.demo-action {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.demo-btn-start {
+  background: linear-gradient(135deg, rgba(172, 19, 47, 0.8), rgba(172, 19, 47, 1));
+  border: 1px solid rgba(172, 19, 47, 1);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-gothic);
+  box-shadow: 0 2px 8px rgba(172, 19, 47, 0.3);
+}
+
+.demo-btn-start:hover {
+  background: linear-gradient(135deg, rgba(172, 19, 47, 1), rgba(200, 25, 55, 1));
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(172, 19, 47, 0.4);
+}
+
+.demo-btn-stop {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-gothic);
+}
+
+.demo-btn-stop:hover {
+  background: rgba(255, 100, 100, 0.3);
+  border-color: rgba(255, 100, 100, 0.6);
+}
+
+.demo-info {
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-gothic);
+}
+
+.quick-demo-btn {
+  position: absolute;
+  top: 300px;
+  right: 50px;
+  background: transparent;
+  border: none;
+  color: rgba(172, 19, 47, 0.8);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: underline;
+  font-family: var(--font-gothic);
+  z-index: 150;
+}
+
+.quick-demo-btn:hover {
+  color: rgba(172, 19, 47, 1);
+  transform: none;
 }

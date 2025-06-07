@@ -11,6 +11,10 @@ export const currentBpm: Writable<number | null> = writable(null);
 export const lastUpdated: Writable<number | null> = writable(null);
 export const queryText = writable("");
 
+// Track BPM used for last recommendation generation for threshold-based updates
+let lastRecommendationBpm: number | null = null;
+const BPM_UPDATE_THRESHOLD = 20; // Only update playlist if BPM changes by >20
+
 export interface TrackInfo {
   name: string;
   artist: string;
@@ -28,6 +32,23 @@ export const songProgress = writable(0); // 0-100 percentage
 export const songDuration = writable(0);
 export const songCurrentTime = writable(0);
 export const isPlaying = writable(false); // Track playing state
+
+// Store the progress interval for cleanup
+let progressInterval: ReturnType<typeof setInterval> | null = null;
+
+// Reset progress state
+function resetProgressState() {
+  songProgress.set(0);
+  songDuration.set(0);
+  songCurrentTime.set(0);
+  isPlaying.set(false);
+  
+  // Clear any existing progress interval
+  if (progressInterval !== null) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+}
 
 export interface AudioFeature {
   track_id: string;
@@ -93,6 +114,12 @@ export const userPreferences = writable({
   speechiness: 3 // 1-5 scale
 });
 
+// Demo mode state
+export const isDemoMode = writable(false);
+export const demoWorkoutActive = writable(false); // Track if workout simulation is running
+
+let demoWorkoutInterval: ReturnType<typeof setInterval> | null = null;
+
 // Initialize the app
 export function initializeApp() {
   console.log("App mounted, checking initial auth state...");
@@ -137,7 +164,13 @@ export function initializeApp() {
     const bpmRef = dbRef(rtdb, "heart_rate/current_bpm");
     onValue(bpmRef, (snapshot) => {
       const val = snapshot.val();
-      currentBpm.set(val !== null ? Number(val) : null);
+      const newBpm = val !== null ? Number(val) : null;
+      currentBpm.set(newBpm);
+      
+      // Check for threshold-based playlist updates
+      if (newBpm !== null) {
+        checkAndUpdatePlaylistForBPM(newBpm);
+      }
     });
     const updatedRef = dbRef(rtdb, "heart_rate/last_updated");
     onValue(updatedRef, (snapshot) => {
@@ -454,6 +487,10 @@ export function initYouTubePlayer() {
   const $player = get(player);
   
   if (!$playerReady || !$currentVideoId) return;
+  
+  // Reset progress state before initializing new player
+  resetProgressState();
+  
   if ($player) {
     $player.destroy();
     player.set(null);
@@ -487,6 +524,12 @@ export function trackProgress() {
     return;
   }
   
+  // Clear any existing progress interval
+  if (progressInterval !== null) {
+    clearInterval(progressInterval);
+    progressInterval = null;
+  }
+  
   console.log("Starting progress tracking");
   
   const updateProgress = () => {
@@ -507,17 +550,23 @@ export function trackProgress() {
   };
   
   // Update progress every 500ms
-  const progressInterval = setInterval(() => {
+  progressInterval = setInterval(() => {
     try {
       if ($player && $player.getPlayerState && $player.getPlayerState() === 1) { // Playing state
         updateProgress();
       } else if (!$player || $player.getPlayerState() === 0) { // Ended or destroyed
         console.log("Clearing progress interval - player ended or destroyed");
-        clearInterval(progressInterval);
+        if (progressInterval !== null) {
+          clearInterval(progressInterval);
+          progressInterval = null;
+        }
       }
     } catch (e) {
       console.log("Error in progress interval:", e);
-      clearInterval(progressInterval);
+      if (progressInterval !== null) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
     }
   }, 500);
 }
@@ -572,6 +621,8 @@ export async function playRecommendation(idx: number) {
   
   const rec = $recommendations[idx];
   if (!rec) return;
+
+  resetProgressState();
 
   // Update current track info
   foundTrack.set({ name: rec.track_name, artist: rec.artist_name });
@@ -741,6 +792,13 @@ export async function searchByKey(foundKey: string) {
     playlist.set(newPlaylist);
     foundTrack.set({ name: baseFeat.track_name, artist: baseFeat.artist_name });
 
+    // Set initial BPM tracking for threshold-based updates
+    const $currentBpm = get(currentBpm);
+    if ($currentBpm !== null) {
+      lastRecommendationBpm = $currentBpm;
+      console.log(`Initial playlist created with BPM: ${$currentBpm}`);
+    }
+
     // 사용자가 ▶ 버튼을 누르도록 변경
     // await playRecommendation(0);
   } catch (err: any) {
@@ -748,5 +806,188 @@ export async function searchByKey(foundKey: string) {
     errorMessage.set(err.message || "알 수 없는 오류가 발생했습니다.");
   } finally {
     isSearching.set(false);
+  }
+}
+
+// =================================
+// DEMO MODE FUNCTIONALITY
+// =================================
+
+export async function startDemoMode() {
+  isDemoMode.set(true);
+  
+  // Write initial demo heart rate to Firebase
+  const initialBpm = 75;
+  const timestamp = Date.now();
+  
+  try {
+    await set(dbRef(rtdb, "heart_rate/current_bpm"), initialBpm);
+    await set(dbRef(rtdb, "heart_rate/last_updated"), timestamp);
+    console.log(`Demo mode activated! Initial BPM: ${initialBpm}`);
+  } catch (error) {
+    console.error("Error writing demo data to Firebase:", error);
+    // Fallback to local state if Firebase fails
+    currentBpm.set(initialBpm);
+    lastUpdated.set(timestamp);
+  }
+}
+
+export function stopDemoMode() {
+  isDemoMode.set(false);
+  // Stop any active workout simulation
+  stopWorkoutDemo();
+  // Reset BPM tracking when leaving demo mode
+  lastRecommendationBpm = null;
+  console.log("Demo mode deactivated!");
+}
+
+export async function setDemoHeartRate(bpm: number) {
+  if (get(isDemoMode)) {
+    const timestamp = Date.now();
+    
+    try {
+      // Write to Firebase - this will trigger the onValue listeners
+      await set(dbRef(rtdb, "heart_rate/current_bpm"), bpm);
+      await set(dbRef(rtdb, "heart_rate/last_updated"), timestamp);
+      console.log(`Demo heart rate set to ${bpm} BPM`);
+    } catch (error) {
+      console.error("Error writing demo heart rate to Firebase:", error);
+      // Fallback to local state if Firebase fails
+      currentBpm.set(bpm);
+      lastUpdated.set(timestamp);
+    }
+  }
+}
+
+export async function startWorkoutDemo() {
+  if (!get(isDemoMode)) return;
+  
+  // Stop any existing workout simulation
+  stopWorkoutDemo();
+  
+  demoWorkoutActive.set(true);
+  console.log("Starting automated workout demo...");
+  
+  // Workout phases with realistic BPM progression
+  const phases = [
+    // Phase 1: Warm-up (60 → 90 BPM over 15 seconds)
+    { name: "Warming up...", startBpm: 60, endBpm: 90, duration: 15 },
+    // Phase 2: Light exercise (90 → 120 BPM over 20 seconds)
+    { name: "Light exercise...", startBpm: 90, endBpm: 120, duration: 20 },
+    // Phase 3: High intensity (120 → 170 BPM over 15 seconds)
+    { name: "High intensity!", startBpm: 120, endBpm: 170, duration: 15 },
+    // Phase 4: Cool down start (170 → 130 BPM over 15 seconds)
+    { name: "Cooling down...", startBpm: 170, endBpm: 130, duration: 15 },
+    // Phase 5: Recovery (130 → 80 BPM over 20 seconds)
+    { name: "Recovery...", startBpm: 130, endBpm: 80, duration: 20 },
+    // Phase 6: Back to rest (80 → 65 BPM over 15 seconds)
+    { name: "Back to rest", startBpm: 80, endBpm: 65, duration: 15 }
+  ];
+  
+  let currentPhaseIndex = 0;
+  let phaseStartTime = Date.now();
+  
+  const runWorkoutSimulation = async () => {
+    if (currentPhaseIndex >= phases.length) {
+      // Workout complete
+      stopWorkoutDemo();
+      console.log("Workout demo completed!");
+      return;
+    }
+    
+    const phase = phases[currentPhaseIndex];
+    const elapsed = (Date.now() - phaseStartTime) / 1000; // seconds
+    
+    if (elapsed >= phase.duration) {
+      // Move to next phase
+      currentPhaseIndex++;
+      phaseStartTime = Date.now();
+      if (currentPhaseIndex < phases.length) {
+        console.log(`Demo phase: ${phases[currentPhaseIndex].name}`);
+      }
+      return;
+    }
+    
+    // Calculate current BPM for this phase
+    const progress = elapsed / phase.duration;
+    const bpmDiff = phase.endBpm - phase.startBpm;
+    const currentBpm = Math.round(phase.startBpm + (bpmDiff * progress));
+    
+    // Update heart rate
+    await setDemoHeartRate(currentBpm);
+  };
+  
+  // Start the simulation
+  console.log(`Demo phase: ${phases[0].name}`);
+  demoWorkoutInterval = setInterval(runWorkoutSimulation, 1000); // Update every second
+}
+
+export function stopWorkoutDemo() {
+  if (demoWorkoutInterval) {
+    clearInterval(demoWorkoutInterval);
+    demoWorkoutInterval = null;
+  }
+  demoWorkoutActive.set(false);
+  console.log("Workout demo stopped");
+}
+
+export async function simulateWorkout() {
+  // Legacy function - redirect to new automated demo
+  await startWorkoutDemo();
+}
+
+// =================================
+// THRESHOLD-BASED PLAYLIST UPDATES
+// =================================
+
+/**
+ * Automatically regenerate recommendations if BPM change exceeds threshold
+ * Only triggers if there's an active playlist and BPM change is significant
+ */
+async function checkAndUpdatePlaylistForBPM(newBpm: number) {
+  const $recommendations = get(recommendations);
+  const $foundTrack = get(foundTrack);
+  
+  // Only auto-update if we have an active playlist
+  if ($recommendations.length === 0 || !$foundTrack) {
+    return;
+  }
+  
+  // Check if BPM change exceeds threshold
+  if (lastRecommendationBpm !== null) {
+    const bpmChange = Math.abs(newBpm - lastRecommendationBpm);
+    
+    if (bpmChange > BPM_UPDATE_THRESHOLD) {
+      console.log(`BPM changed by ${bpmChange} (${lastRecommendationBpm} → ${newBpm}), regenerating playlist...`);
+      
+      try {
+        // Find the base track (first recommendation or currently playing track)
+        const $currentIndex = get(currentIndex);
+        const baseRecommendation = $recommendations[$currentIndex] || $recommendations[0];
+        
+        if (baseRecommendation) {
+          // Regenerate recommendations with new BPM
+          const newRecommendations = await buildRecommendations(baseRecommendation.key, 10);
+          
+          // Preserve the currently playing track at index 0, add new recommendations after
+          const updatedRecommendations: Recommendation[] = [
+            baseRecommendation, // Keep current track
+            ...newRecommendations
+          ];
+          
+          // Update recommendations and playlist
+          recommendations.set(updatedRecommendations);
+          const newPlaylist = updatedRecommendations.map((r) => r.videoId || "");
+          playlist.set(newPlaylist);
+          
+          // Update the BPM tracking
+          lastRecommendationBpm = newBpm;
+          
+          console.log(`Playlist updated based on new BPM: ${newBpm}`);
+        }
+      } catch (error) {
+        console.error("Error auto-updating playlist for BPM change:", error);
+      }
+    }
   }
 } 
