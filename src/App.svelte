@@ -85,6 +85,7 @@
   let showWelcomePage = false;
   let showSignInPage = false;
   let showPreferencesPage = false;
+  let showInstructionPage = false;
   let showSensorPage = false;
   let showHomePage = false;
   let user: any = null;
@@ -118,13 +119,13 @@
         console.log("Has preferences:", hasPreferences);
         
         if (hasPreferences) {
-          // Existing user - go to sensor page first
-          console.log("Existing user - navigating to sensor page");
+          // Existing user - go to instruction page first
+          console.log("Existing user - navigating to instruction page");
           showSignInPage = false;
           showWelcomePage = false;
           showPreferencesPage = false;
           showHomePage = false;
-          showSensorPage = true;
+          showInstructionPage = true;
         } else {
           // First-time user - show preferences page
           console.log("New user - navigating to preferences page");
@@ -211,9 +212,9 @@
       await set(dbRef(rtdb, `users/${user.uid}/preferences`), userPreferences);
       await set(dbRef(rtdb, `users/${user.uid}/createdAt`), Date.now());
       
-      // Navigate to sensor page
+      // Navigate to instruction page
       showPreferencesPage = false;
-      showSensorPage = true;
+      showInstructionPage = true;
     } catch (error) {
       console.error("Error saving preferences:", error);
     }
@@ -371,6 +372,16 @@
     showSignInPage = true;
   }
 
+  function goBackFromInstructions() {
+    showInstructionPage = false;
+    showPreferencesPage = true;
+  }
+
+  function continueFromInstructions() {
+    showInstructionPage = false;
+    showSensorPage = true;
+  }
+
   async function signInWithGoogle() {
     const provider = new GoogleAuthProvider();
     try {
@@ -389,6 +400,7 @@
       showWelcomePage = true;
       showSignInPage = false;
       showPreferencesPage = false;
+      showInstructionPage = false;
       showSensorPage = false;
       showHomePage = false;
       user = null;
@@ -419,7 +431,7 @@
     showHomePage = true;
   }
 
-  // API세팅팅
+  // API세팅
   function initYouTubePlayer() {
     if (!playerReady || !currentVideoId) return;
     if (player) {
@@ -491,6 +503,7 @@
     } else {
       player.playVideo();
     }
+
   }
 
   $: if (currentVideoId && playerReady) {
@@ -669,6 +682,7 @@
   }
 </script>
 
+
 <div class="mobile-container">
   {#if showLaunchScreen}
     <div class="page-container">
@@ -770,9 +784,104 @@
         Continue
       </button>
     </div>
+  {:else if showInstructionPage}
+    <div class="page-container">
+      <!-- Background -->
+      <div style="width: 100%; height: 100%; background: #1A1A1A; position: absolute;"></div>
+      
+      <!-- Back Button -->
+      <button class="absolute flex-center" style="width: 60px; height: 40px; left: 20px; top: 60px;" on:click={goBackFromInstructions} type="button" aria-label="Go back to preferences page">
+        <div style="width: 8px; height: 14px; background: var(--color-text); clip-path: polygon(40% 0%, 40% 35%, 100% 35%, 100% 65%, 40% 65%, 40% 100%, 0% 50%); margin-right: 8px;"></div>
+        <span style="color: var(--color-text); font-size: 16px; font-family: var(--font-system); font-weight: 400;">Back</span>
+      </button>
+
+      <!-- Main Heading -->
+      <div style="position: absolute; top: 120px; left: 40px; width: 350px;">
+        <h1 style="color: var(--color-text); font-size: 32px; font-family: var(--font-system); font-weight: 700; line-height: 1.2; margin: 0; letter-spacing: -0.5px;">
+          READY TO GET<br/>SYNCED?
+        </h1>
+      </div>
+
+      <!-- Description Text -->
+      <div style="position: absolute; top: 220px; left: 40px; width: 350px;">
+        <p style="color: rgba(255, 255, 255, 0.8); font-size: 16px; font-family: var(--font-system); font-weight: 400; line-height: 1.5; margin: 0;">
+          Before we get started, please understand how HeartStream works. Your heart rate will be used to create the perfect music experience for you.
+        </p>
+      </div>
+
+      <!-- Video/Image Container -->
+      <div style="position: absolute; top: 320px; left: 40px; width: 350px; height: 200px; background: #2A2A2A; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <!-- Heart to Music SVG -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+          <img src="/assets/heart-to-music.svg" alt="Heart Rate to Music Flow" style="width: 280px; height: auto; opacity: 0.9;" />
+          <div style="color: rgba(255, 255, 255, 0.7); font-size: 14px; font-family: var(--font-system); text-align: center;">
+            Heart Rate → Music Match
+          </div>
+        </div>
+      </div>
+
+      <!-- Checklist/Steps -->
+      <div style="position: absolute; top: 560px; left: 40px; width: 350px;">
+        <h3 style="color: var(--color-text); font-size: 18px; font-family: var(--font-system); font-weight: 600; margin: 0 0 20px 0;">
+          How it works:
+        </h3>
+        
+        <!-- Step 1 -->
+        <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 20px; height: 20px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; flex-shrink: 0;">
+            <div style="width: 8px; height: 6px; border: 2px solid white; border-top: none; border-right: none; transform: rotate(-45deg) translateY(-1px);"></div>
+          </div>
+          <div style="color: rgba(255, 255, 255, 0.9); font-size: 15px; font-family: var(--font-system); line-height: 1.4;">
+            Place finger on sensor for heart rate reading. Keep it still for accurate readings.
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 16px;">
+          <div style="width: 20px; height: 20px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; flex-shrink: 0;">
+            <div style="width: 8px; height: 6px; border: 2px solid white; border-top: none; border-right: none; transform: rotate(-45deg) translateY(-1px);"></div>
+          </div>
+          <div style="color: rgba(255, 255, 255, 0.9); font-size: 15px; font-family: var(--font-system); line-height: 1.4;">
+            HeartStream analyzes your BPM and preferences. 
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div style="display: flex; align-items: flex-start; gap: 12px; margin-bottom: 24px;">
+          <div style="width: 20px; height: 20px; background: var(--color-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-top: 2px; flex-shrink: 0;">
+            <div style="width: 8px; height: 6px; border: 2px solid white; border-top: none; border-right: none; transform: rotate(-45deg) translateY(-1px);"></div>
+          </div>
+          <div style="color: rgba(255, 255, 255, 0.9); font-size: 15px; font-family: var(--font-system); line-height: 1.4;">
+            Perfect music playlist is generated automatically.
+          </div>
+        </div>
+      </div>
+
+      <!-- Continue Button -->
+      <button 
+        style="position: absolute; bottom: 40px; left: 40px; width: 350px; height: 56px; background: white; border: none; border-radius: 28px; color: #1A1A1A; font-size: 16px; font-family: var(--font-system); font-weight: 600; cursor: pointer; transition: all 0.2s ease;"
+        on:click={continueFromInstructions} 
+        on:mouseenter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = '0 4px 20px rgba(255,255,255,0.2)';
+        }}
+        on:mouseleave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = 'none';
+        }}
+        type="button" 
+        aria-label="Continue to sensor connection"
+      >
+        Next
+      </button>
+    </div>
   {:else if showSensorPage}
     <div class="page-container">
       <div style="width: 266px; height: 266px; left: 84px; top: 297px; background: rgba(255, 34.61, 75.02, 0.60); position: absolute; box-shadow: 300px 300px 300px; border-radius: 50%; filter: blur(150px);"></div>
+      
+      <!-- Pulsing red ellipse -->
+      <div style="width: 80px; height: 80px; left: 50%; top: 400px; transform: translateX(-50%); background: var(--color-accent); border-radius: 50%; position: absolute; animation: sensorPulse 2s infinite ease-in-out; filter: blur(20px); opacity: 0.1;"></div>
+      
       <div class="content-section heading-medium" style="width: 277px; left: 79px; top: 121px;">
         Connect to Sensor
       </div>
@@ -882,7 +991,7 @@
               >
                 <div class="track-info">
                   <span class="track-full">
-                    {#if rec.index === 0}🔹♥️ {/if}{rec.track_name} - {rec.artist_name}
+                    {#if rec.index === 0}🔹 {/if}{rec.track_name} - {rec.artist_name}
                   </span>
                 </div>
                 {#if currentIndex === idx}
