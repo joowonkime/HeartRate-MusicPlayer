@@ -17,6 +17,7 @@ HeartStream is an innovative music streaming application that uses real-time hea
   - Multi-dimensional Euclidean distance calculations
 - **Smart song disambiguation** for tracks with multiple artists
 - **Infinite playlist generation** with seamless playback
+- **Intelligent queue management** maintaining 11 songs ahead automatically
 
 ### 👤 Personalized Experience
 - **User preference profiling**:
@@ -27,58 +28,13 @@ HeartStream is an innovative music streaming application that uses real-time hea
 - **Google Authentication** with persistent user profiles
 - **Firebase integration** for user data and preferences storage
 
-### 🎮 Intuitive Interface
-- **Modern glassmorphism design** with smooth animations
-- **Real-time progress tracking** with visual progress bars
-- **Dynamic play/pause controls** that adapt to player state
-- **ECG-style visualization** with animated heart rate display
-- **Mobile-optimized** responsive design (433px width)
-
 ### 🎵 Music Playback
 - **YouTube integration** for unlimited music access
 - **Lazy loading** - only searches for videos when songs are played
 - **Error handling** with automatic fallback to next track
-- **Queue management** maintaining 11 songs ahead automatically
+- **Smart playback controls** that adapt to player state
 
-## 🚀 Getting Started
 
-### Prerequisites
-- Node.js (v16 or higher)
-- npm or yarn
-- Firebase project with Realtime Database
-- YouTube Data API v3 key
-- Heart rate sensor (optional for full functionality)
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd HeartRate-MusicPlayer
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up Firebase configuration**
-   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Enable Authentication and Realtime Database
-   - Add your Firebase config to `src/lib/firebase.ts`
-
-4. **Configure YouTube API**
-   - Get YouTube Data API v3 key from [Google Cloud Console](https://console.cloud.google.com/)
-   - Add your API key to `src/lib/youtube-api.ts`
-
-5. **Set up the database**
-   - Import audio features data to Firebase Realtime Database
-   - Structure: `/audioFeatures/{trackId}` containing Spotify audio feature data
-
-6. **Start the development server**
-   ```bash
-   npm run dev
-   ```
 
 ## 🏗️ Architecture
 
@@ -86,13 +42,14 @@ HeartStream is an innovative music streaming application that uses real-time hea
 - **Frontend**: Svelte + TypeScript + Vite
 - **Backend**: Firebase (Authentication + Realtime Database)
 - **Music API**: YouTube Data API v3
-- **Styling**: Custom CSS with CSS custom properties
+- **Styling**: Custom CSS with organized design system
 
 ### Key Components
 
 ```
 src/
-├── App.svelte              # Main application component
+├── App.svelte              # UI components and presentation layer
+├── AppLogic.ts             # Logic, state management, and API integrations
 ├── lib/
 │   ├── firebase.ts         # Firebase configuration
 │   └── youtube-api.ts      # YouTube API integration
@@ -100,12 +57,13 @@ src/
 └── assets/                 # Static assets (logos, images)
 ```
 
+
 ### Data Flow
 
 ```mermaid
 graph TD
     A[Heart Rate Sensor] --> B[Firebase Realtime DB]
-    B --> C[Heart Rate Monitor]
+    B --> C[AppLogic.ts - State Management]
     C --> D[Recommendation Algorithm]
     
     E[User Preferences] --> D
@@ -113,14 +71,15 @@ graph TD
     
     D --> G[Music Recommendations]
     G --> H[YouTube API Search]
-    H --> I[Music Player]
+    H --> I[Music Player State]
     
-    I --> J[Progress Tracking]
-    J --> K[UI Updates]
+    I --> J[App.svelte - UI Updates]
+    J --> K[User Interface]
     
     style A fill:#ff6b6b
-    style D fill:#4ecdc4
-    style I fill:#45b7d1
+    style C fill:#4ecdc4
+    style D fill:#45b7d1
+    style J fill:#95e1d3
 ```
 
 ## 🎛️ User Journey
@@ -129,10 +88,11 @@ graph TD
 2. **Welcome Page** - Introduction and continue button
 3. **Authentication** - Google sign-in integration
 4. **Preferences Setup** - Music taste configuration (first-time users)
+5. **Instructions Page** - Clear explanation of how HeartStream works
 5. **Sensor Connection** - Heart rate sensor pairing
 6. **Home Dashboard** - Heart rate display and music search
-7. **Music Discovery** - Search and recommendation interface
-8. **Playback Control** - Full-featured music player
+8. **Music Discovery** - Advanced search and recommendation interface
+9. **Playback Control** - Full-featured music player with progress tracking
 
 
 ## 🧮 Recommendation Algorithm
@@ -147,9 +107,9 @@ The core recommendation system uses a **hybrid distance algorithm** that conside
 - **Liveness**: Detects presence of audience in recording
 
 ### Heart Rate Integration
-```javascript
-function hybridDistance(candidate, base, userPreferences) {
-  // Calculate audio feature distance
+```typescript
+function hybridDistance(candidate: AudioFeature, base: AudioFeature, userPreferences: UserPreferences): number {
+  // Calculate audio feature distance with user preference weighting
   let audioDistance = euclideanDistance(candidate, base, userPreferences);
   
   // Add BPM weighting based on current heart rate
@@ -163,8 +123,8 @@ function hybridDistance(candidate, base, userPreferences) {
 ## 🔧 Configuration
 
 ### Firebase Setup
-```javascript
-// src/lib/firebase.ts
+```typescript
+// src/AppLogic.ts
 const firebaseConfig = {
   apiKey: "your-api-key",
   authDomain: "your-domain.firebaseapp.com",
@@ -204,6 +164,10 @@ const firebaseConfig = {
 ```
 
 
+## 🔍 Challenges
+여기에 각 부분에 대한 챌린지 적어두기
+
+
 ## 🙏 Acknowledgments
 
 - **Spotify Web API** for audio feature data structure
@@ -211,12 +175,8 @@ const firebaseConfig = {
 - **Firebase** for real-time database and authentication
 - **Svelte** for the reactive UI framework
 
-## 📞 Support
 
-For questions, issues, or feature requests, please:
-- Open an issue on GitHub
-- Check existing documentation
-- Review the troubleshooting guide
+
 
 ---
 
