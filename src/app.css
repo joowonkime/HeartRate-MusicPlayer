@@ -129,6 +129,14 @@ button:focus-visible {
   position: relative;
   background: var(--color-primary);
   overflow: hidden;
+  
+  /* Ensure minimum background even if blur effects fail */
+  background: linear-gradient(135deg, #000000 0%, #0a0505 100%);
+}
+
+/* For sign-in page specifically, add subtle red tint */
+.page-container:has(.bg-blur-signin) {
+  background: linear-gradient(135deg, #000000 0%, #080303 50%, #0a0505 100%);
 }
 
 .content-section {
@@ -145,6 +153,62 @@ button:focus-visible {
   border-radius: 50%;
   filter: blur(150px);
   position: absolute;
+  
+  /* Mobile fallback - simpler gradient background */
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 34, 75, 0.3) 0%,
+    rgba(255, 34, 75, 0.15) 50%,
+    rgba(255, 34, 75, 0.05) 100%
+  );
+}
+
+/* Reliable fallback using pseudo-element */
+.bg-blur::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  right: -100px;
+  bottom: -100px;
+  background: radial-gradient(
+    ellipse 500px 500px at center,
+    rgba(255, 34, 75, 0.15) 0%,
+    rgba(255, 34, 75, 0.08) 40%,
+    rgba(255, 34, 75, 0.02) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Mobile-specific optimizations */
+@media screen and (max-width: 480px) {
+  .bg-blur {
+    /* Reduce blur intensity for mobile performance */
+    filter: blur(80px);
+    box-shadow: 150px 150px 150px rgba(255, 34, 75, 0.1);
+    
+    /* Ensure the gradient shows even if blur fails */
+    background: radial-gradient(
+      ellipse 400px 400px at center,
+      rgba(255, 34, 75, 0.25) 0%,
+      rgba(255, 34, 75, 0.12) 40%,
+      rgba(255, 34, 75, 0.04) 70%,
+      transparent 100%
+    );
+  }
+  
+  /* Stronger fallback for mobile */
+  .bg-blur::before {
+    background: radial-gradient(
+      ellipse 600px 600px at center,
+      rgba(255, 34, 75, 0.2) 0%,
+      rgba(255, 34, 75, 0.1) 30%,
+      rgba(255, 34, 75, 0.03) 60%,
+      transparent 100%
+    );
+  }
 }
 
 .bg-blur-main {
@@ -659,7 +723,7 @@ button:focus-visible {
 
 .player-top-section {
   align-self: stretch;
-  height: 87px;
+  height: 65px;
   background: black;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -667,7 +731,7 @@ button:focus-visible {
 
 .player-bottom-section {
   align-self: stretch;
-  height: 83px;
+  height: 60px;
   background: black;
 }
 
@@ -675,7 +739,7 @@ button:focus-visible {
   width: 293px;
   height: 0px;
   left: 1px;
-  top: 95px;
+  top: 60px;
   position: absolute;
   outline: 1px rgba(255, 255, 255, 0.90) solid;
   outline-offset: -2px;
@@ -686,7 +750,7 @@ button:focus-visible {
   width: 38px;
   height: 38px;
   left: 329px;
-  top: 25px;
+  top: 15px;
   position: absolute;
   overflow: hidden;
   background: transparent;
@@ -729,7 +793,7 @@ button:focus-visible {
   width: 38px;
   height: 38px;
   left: 367px;
-  top: 25px;
+  top: 15px;
   position: absolute;
   overflow: hidden;
   background: transparent;
@@ -756,10 +820,10 @@ button:focus-visible {
   width: 218px;
   height: 31px;
   left: 37px;
-  top: 23px;
+  top: 15px;
   position: absolute;
   color: var(--color-text);
-  font-size: 20px;
+  font-size: 18px;
   font-family: var(--font-gothic);
   font-weight: 600;
   /* Text truncation for long titles */
@@ -772,10 +836,10 @@ button:focus-visible {
   width: 218px;
   height: 18px;
   left: 37px;
-  top: 51px;
+  top: 40px;
   position: absolute;
   color: var(--color-text-muted);
-  font-size: 16px;
+  font-size: 14px;
   font-family: var(--font-gothic);
   font-weight: 500;
   /* Text truncation for long artist names */
@@ -789,7 +853,7 @@ button:focus-visible {
   width: 355px;
   height: 3px;
   left: 37px;
-  top: 90px;
+  top: 68px;
   position: absolute;
   background: rgba(255, 255, 255, 0.3);
   border-radius: 1px;
