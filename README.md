@@ -22,6 +22,7 @@
 
 - **Hosting** [HeartRate Music App](https://heartrate-music-app.web.app)
 - **DemoVideo** [Play on Youtube](https://youtu.be/GvQgEvOdoQI)
+- **Repository** https://github.com/joowonkime/HeartRate-MusicPlayer
 
 
 ## ✨ Features
