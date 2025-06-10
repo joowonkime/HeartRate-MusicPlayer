@@ -20,6 +20,9 @@
 
 **HeartStream** is an innovative music streaming application that uses real-time heart rate data to curate and play the perfect music for your current mood and activity level. Built with Svelte, Firebase, and the YouTube API, it creates a personalized listening experience that adapts to your physiological state.
 
+- **Hosting** [HeartRate Music App](https://heartrate-music-app.web.app)
+- **DemoVideo** [Play on Youtube](https://youtu.be/GvQgEvOdoQI)
+
 
 ## ✨ Features
 

@@ -1,7 +1,7 @@
 import { onMount, tick } from "svelte";
 import { rtdb } from "./lib/firebase";
 import { ref as dbRef, onValue, get as dbGet, set } from "firebase/database";
-import { searchYoutubeVideo } from "./lib/youtube-api";
+import { searchYoutubeVideo, getThumbnailByVideoId } from "./lib/youtube-api";
 import { auth } from "./lib/firebase";
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { writable, type Writable, get } from "svelte/store";
@@ -79,6 +79,7 @@ export type Recommendation = {
   artist_name: string;
   videoId: string | null;
   index: number;
+  thumbnail: string | null;
 };
 
 export const recommendations: Writable<Recommendation[]> = writable([]);
@@ -349,7 +350,8 @@ export async function buildRecommendations(
       track_name: feat.track_name,
       artist_name: feat.artist_name,
       videoId: null,
-      index: i + 1
+      index: i + 1,
+      thumbnail: null
     });
   }
   return recs;
@@ -392,7 +394,8 @@ export async function getMoreRecommendations(
       track_name: feat.track_name,
       artist_name: feat.artist_name,
       videoId: null,
-      index: -1
+      index: -1,
+      thumbnail: null
     });
   }
   return recs;
@@ -666,7 +669,9 @@ export async function playRecommendation(idx: number) {
     }
 
     // 받은 ID를 저장하고 재생
+    const thumbUrl = await getThumbnailByVideoId(videoId);
     rec.videoId = videoId;
+    rec.thumbnail = thumbUrl || null;
     currentIndex.set(idx);
     currentVideoId.set(videoId);
     // DOM이 바뀔 때까지 tick()으로 대기
@@ -783,7 +788,8 @@ export async function searchByKey(foundKey: string) {
       track_name: baseFeat.track_name,
       artist_name: baseFeat.artist_name,
       videoId: basicVideoId,
-      index: 0
+      index: 0,
+      thumbnail: null
     });
     recsFromDB.forEach((r) => merged.push(r));
 

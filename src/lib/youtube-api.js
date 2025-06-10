@@ -10,3 +10,15 @@ export async function searchYoutubeVideo(query) {
     return null;
   }
 }
+
+export async function getThumbnailByVideoId(videoId) {
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}` + `&key=${YT_API_KEY}`
+  );
+  const data = await res.json();
+  if (data.items?.length > 0) {
+    const thumbs = data.items[0].snippet.thumbnails;
+    return thumbs.high?.url || thumbs.medium?.url || thumbs.default.url;
+  }
+  return null;
+}
